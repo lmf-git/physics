@@ -1,0 +1,17 @@
+{
+  "name": "physics",
+  "version": "1.0.0",
+  "source": "src/index.html",
+  "license": "MIT",
+  "scripts": {
+    "start": "parcel",
+    "build": "parcel build"
+  },
+  "dependencies": {
+    "cannon-es": "^0.18.0",
+    "three": "^0.135.0"
+  },
+  "devDependencies": {
+    "parcel": "^2.0.1"
+  }
+}
