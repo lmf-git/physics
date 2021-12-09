@@ -1,69 +1,192 @@
 import * as THREE from 'three';
-import { World, Box, Body, Vec3, Plane, Sphere } from 'cannon-es';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import * as CANNON from 'cannon-es';
 
-// Spherical body attempt?
-// https://codepen.io/anon/pen/ygvLGV
 
-const physicsTimeStep = 1 / 60;
+// https://ai-gallery.vercel.app
 
-const clock = new THREE.Clock;
+/**
+ * Base
+ */
+// Canvas
+const canvas = document.querySelector('#canvas')
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 100);
-camera.position.z = 5;
+// Scene
+const scene = new THREE.Scene()
 
-const scene = new THREE.Scene(); 
-const world = new World();
+/**
+ * Physics
+ */
+const world = new CANNON.World()
 
-// Renderer
-const renderer = new THREE.WebGLRenderer({ antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
+world.gravity.set(0, -9.82, 0)
 
-document.body.appendChild(renderer.domElement);
+world.broadphase = new CANNON.SAPBroadphase(world)
+
+world.allowSleep = true
+
+const defaultMaterial = new CANNON.Material('default')
+
+const defaultContactMaterial = new CANNON.ContactMaterial(defaultMaterial, defaultMaterial, {
+  friction: 0.1,
+  restitution: 0.7,
+})
+
+world.defaultContactMaterial = defaultContactMaterial
+
+const floorShape = new CANNON.Box(new CANNON.Vec3(5, 5, 0.01))
+
+const floorBody = new CANNON.Body()
+
+floorBody.addShape(floorShape)
+
+floorBody.quaternion.setFromAxisAngle(new CANNON.Vec3(-1, 0, 0), Math.PI * 0.5)
+
+world.addBody(floorBody)
+
+/**
+ * Utils
+ */
+const sphereGeometry = new THREE.SphereGeometry(1, 20, 20)
+
+const sphereMaterial = new THREE.MeshStandardMaterial({
+  metalness: 0.3,
+  roughness: 0.4
+})
+
+const objectsToUpdate = []
+
+const createSphere = (radius, position) => {
+  const mesh = new THREE.Mesh(sphereGeometry, sphereMaterial)
+
+  mesh.castShadow = true
+  mesh.position.copy(position)
+
+  mesh.scale.set(radius, radius, radius)
+
+  scene.add(mesh)
+
+  const shape = new CANNON.Sphere(radius)
+
+  const body = new CANNON.Body({
+    mass: 1,
+    position: new CANNON.Vec3(0, 3, 0),
+    shape: shape,
+  })
+
+  body.position.copy(position)
+
+  world.addBody(body)
+
+  objectsToUpdate.push({ mesh, body })
+}
+
+createSphere(0.5, { x: 0, y: 3, z: 0 })
+
+/**
+ * Floor
+ */
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(10, 10),
+  new THREE.MeshStandardMaterial({
+    color: '#777777',
+    metalness: 0.3,
+    roughness: 0.4
+  }),
+)
+
+floor.receiveShadow = true
+floor.rotation.x = -Math.PI * 0.5
+
+scene.add(floor)
+
+/**
+ * Lights
+ */
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.7)
+scene.add(ambientLight)
+
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.2)
+directionalLight.castShadow = true
+directionalLight.shadow.mapSize.set(1024, 1024)
+directionalLight.shadow.camera.far = 15
+directionalLight.shadow.camera.left = -7
+directionalLight.shadow.camera.top = 7
+directionalLight.shadow.camera.right = 7
+directionalLight.shadow.camera.bottom = -7
+directionalLight.position.set(5, 5, 5)
+scene.add(directionalLight)
+
+/**
+ * Sizes
+ */
+const sizes = {
+  width: window.innerWidth,
+  height: window.innerHeight,
+}
 
 window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+  // Update sizes
+  sizes.width = window.innerWidth
+  sizes.height = window.innerHeight
+
+  // Update camera
+  camera.aspect = sizes.width / sizes.height
+  camera.updateProjectionMatrix()
+
+  // Update renderer
+  renderer.setSize(sizes.width, sizes.height)
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 });
 
-const cubeGeometry = new THREE.BoxBufferGeometry(1, 1, 1);
-const cubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
-const cubeMesh = new THREE.Mesh(cubeGeometry, cubeMaterial);
-const cubeBody = new Body({
-    mass: 1,
-    shape: new Box(new Vec3(2, 2, 2))
-});
+/**
+ * Camera
+ */
+// Base camera
+const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100);
+camera.position.set(-3, 3, 3);
+scene.add(camera);
 
-scene.add(cubeMesh);
-world.addBody(cubeBody);
+// Controls
+const controls = new OrbitControls(camera, canvas);
+controls.enableDamping = true;
 
-const groundBody = new Body({
-    type: Body.STATIC,
-    shape: new Plane(),
-});
-world.addBody(groundBody);
+/**
+ * Renderer
+ */
+const renderer = new THREE.WebGLRenderer({
+  canvas: canvas,
+})
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
+renderer.setSize(sizes.width, sizes.height)
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 
-const animate = () => {
-    // Calculate physics.
-    cubeMesh.position.copy(cubeBody.position);
-    world.step(physicsTimeStep, clock.getDelta());
+/**
+ * Animate
+ */
+const clock = new THREE.Clock()
+let oldElapsedTime = 0
 
-    // Render scene.
-    renderer.render(scene, camera);
-    requestAnimationFrame(animate);
-};
+const update = () => {
+  const elapsedTime = clock.getElapsedTime()
 
-animate();
+  const deltaTime = elapsedTime - oldElapsedTime
 
+  oldElapsedTime = elapsedTime
 
-// const sphereRadius = 1;
-// const sphereGeometry = new THREE.SphereGeometry(sphereRadius);
-// const sphereMaterial = new THREE.MeshNormalMaterial();
-// const sphereMesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
-// scene.add(sphereMesh);
-// const sphereBody = new Body({
-//   mass: 5,
-//   shape: new Sphere(sphereRadius),
-// });
-// sphereBody.position.set(0, 10, 0);
-// world.addBody(sphereBody);
+  world.step(1 / 60, deltaTime, 3)
+
+  for (const object of objectsToUpdate) {
+    object.mesh.position.copy(object.body.position)
+    object.mesh.quaternion.copy(object.body.quaternion)
+  }
+
+  controls.update()
+
+  renderer.render(scene, camera)
+
+  window.requestAnimationFrame(update)
+}
+
+update()
