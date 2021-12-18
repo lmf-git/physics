@@ -65,10 +65,14 @@ const update = () => {
     player.translateZ(Z * 0.1);
     player.translateX(X * 0.1);
 
-    //player.position.set(direction.x, direction.y, direction.z);
-    //player.velocity.multiply(Friction);
-    //player.velocity.addScaledVector(direction, gravity * delta);
-    //player.position.addScaledVector(player.velocity, delta);
+
+    var worldPos = new THREE.Vector3(0, 0, 1);
+    player.getWorldPosition(worldPos);
+    const AltDirection = player.localToWorld(new THREE.Vector3(0, 1, 0)).sub(worldPos).normalize();
+
+    player.up.set(AltDirection.x, AltDirection.y, AltDirection.z);
+
+
     player.lookAt(lilOne.position);
     player.position.clampLength(1, 100000);
 
