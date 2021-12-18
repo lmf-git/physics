@@ -10,11 +10,11 @@ const scene = new THREE.Scene;
 
 
 const lilOne = new THREE.Mesh(
-  new THREE.SphereGeometry(.5, 20, 20),
+  new THREE.SphereGeometry(1, 20, 20),
   new THREE.MeshBasicMaterial({ wireframe: true, color: 0x00ff00 })
 );
 const lilOneTwo = new THREE.Mesh(
-  new THREE.SphereGeometry(.75, 20, 20),
+  new THREE.SphereGeometry(1, 20, 20),
   new THREE.MeshBasicMaterial({ wireframe: true, color: 0x00ff00 })
 );
 const bigOne = new THREE.Mesh(
@@ -55,6 +55,8 @@ const update = () => {
   renderer.render(scene, camera);
 
     const direction = player.position.clone().normalize();
+
+
     direction.multiplyScalar(10);
 
     let Y = ((Keypad.w ? 1 : 0) - (Keypad.s ? 1 : 0));
@@ -69,12 +71,16 @@ const update = () => {
     var worldPos = new THREE.Vector3(0, 0, 1);
     player.getWorldPosition(worldPos);
     const AltDirection = player.localToWorld(new THREE.Vector3(0, 1, 0)).sub(worldPos).normalize();
-
     player.up.set(AltDirection.x, AltDirection.y, AltDirection.z);
 
 
     player.lookAt(lilOne.position);
-    player.position.clampLength(1, 100000);
+
+    let planetHeight = 1;
+    let playerHeight = 0.4 / 2;
+    let Height = playerHeight + planetHeight;
+
+    player.position.clampLength(Height, 100000);
 
 
   window.requestAnimationFrame(update);
@@ -122,7 +128,7 @@ function onDocumentKeyDown(event) {
     } else if (keyCode == 68) {
         Keypad.d = true;
     } else if (keyCode == 32) {
-        Keypad.true = false;
+        Keypad.space = true;
     }
     return false;
 };
