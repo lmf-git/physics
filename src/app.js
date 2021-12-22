@@ -4,6 +4,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 const canvas = document.querySelector('#canvas');
 const scene = new THREE.Scene;
 
+
+
+
 const lilOne = new THREE.Mesh(
   new THREE.SphereGeometry(1, 20, 20),
   new THREE.MeshBasicMaterial({ wireframe: true, color: 0x00ff00 })
@@ -22,13 +25,46 @@ const player = new THREE.Mesh(
     new THREE.MeshBasicMaterial({  color: 0xffff00 })
 );
 
+
+
+//todo precaculate soi sise
+const solarSystem = {
+    name: "sun",
+    body: bigOne,
+    surface: 5,
+    SOISise: 1000,
+    surfaceGravity: 300,
+    children: [
+        {
+            name: "lilOne",
+            body: lilOne,
+            surface: 1,
+            SOISise: 10,
+            surfaceGravity: 1000,
+            children: []
+        },
+        {
+            name: "lilOneTwo",
+            body: lilOneTwo,
+            surface: 1,
+            SOISise: 10,
+            surfaceGravity: 1000,
+            children: []
+        }
+    ]
+};
+
+var depthQueue = [solarSystem];
+var currentItem = solarSystem.children[1];
+
+
 player.position.set(5, 0, 0);
 lilOne.position.set(15, 5, 10)
 lilOneTwo.position.set(5, 10, 20)
 bigOne.position.set(15, 20, 5)
 scene.add(lilOne, lilOneTwo, bigOne);
 
-lilOne.add(player);
+lilOneTwo.add(player);
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
 camera.position.set(0, 30, 30);
 scene.add(camera);
@@ -48,32 +84,77 @@ const update = () => {
 
     renderer.render(scene, camera);
 
-    const direction = player.position.clone().normalize();
+    let currentPlanet = currentItem;
 
-    //caculate and set up direction(forward)
+    let SoiLimit = currentItem.SOISise;
+
+    //get player data
     var worldPos = new THREE.Vector3(0, 0, 1);
     player.getWorldPosition(worldPos);
+    let playerHeight = player.position.length();
+
+    //
+    //check soi
+    let newPlanet = null;
+    if (playerHeight > SoiLimit) {
+        newPlanet = depthQueue.pop();
+    } else {
+        const matches = currentPlanet.children.filter(item => {
+            let distance2 = item.body.position.distanceToSquared(worldPos);
+            return distance2 < item.SOISise * item.SOISise;
+
+        });
+        if (matches[0]) {
+            newPlanet = matches[0];
+            depthQueue.push(currentPlanet);
+        }
+        
+    }
+
+    //change planet if needed
+    if (newPlanet) { //leaving the soi
+
+        const newitem = newPlanet;
+        const oldbody = currentPlanet.body;
+        const newbody = newitem.body;
+        newbody.attach(player);
+
+        // Transform velocity to new cordinate frame
+        let Amat = new THREE.Matrix3().getNormalMatrix(oldbody.matrixWorld).invert();
+        let Bmat = new THREE.Matrix3().getNormalMatrix(newbody.matrixWorld);
+        velocity = velocity.applyMatrix3(Amat).applyMatrix3(Bmat);
+
+        currentPlanet = currentItem = newitem;
+    } else {
+        //check the children here
+    }
+
+     //look up planet infomation
+    let surfaceHeight = currentItem.surface;
+    let surfaceGravity = currentItem.surfaceGravity;
+    const planetbody = currentPlanet.body;
+
+    let direction = player.position.clone().normalize();
+
+    //caculate and set up direction(forward)
+
 
     const altDirection = player.localToWorld(new THREE.Vector3(0, 1, 0)).sub(worldPos).normalize();
     player.up.set(altDirection.x, altDirection.y, altDirection.z);
 
     // Look at the ground
-    player.lookAt(lilOne.position);
+    player.lookAt(planetbody.position);
 
     let Altatude
 
     let delta = 0.01;
 
     //Caculate ground
-    let surfaceHeight = 1;
-  
-
     let playerSize = 0.4 / 2;
     let height = playerSize + surfaceHeight;
-    let playerHeight = player.position.length();
+    
 
     //Caculate Gravity
-    let surfaceGravity = 400;
     let heightScaled = playerHeight / surfaceHeight;
     let gravity = surfaceGravity / (heightScaled * heightScaled);
 
@@ -98,6 +179,8 @@ const update = () => {
 
     if (isNaN(friction)) 
         friction = 0;
+
+    friction = 0;
 
     // Ground collision
     if (playerHeight < height) {
