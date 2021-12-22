@@ -60,13 +60,28 @@ const update = () => {
     // Look at the ground
     player.lookAt(lilOne.position);
 
+    let Altatude
+
     let delta = 0.01;
+
+    //Caculate ground
+    let surfaceHeight = 1;
+  
+
+    let playerSize = 0.4 / 2;
+    let height = playerSize + surfaceHeight;
+    let playerHeight = player.position.length();
+
+    //Caculate Gravity
+    let surfaceGravity = 400;
+    let heightScaled = playerHeight / surfaceHeight;
+    let gravity = surfaceGravity / (heightScaled * heightScaled);
 
     // Move player
     let Y = 50 *((Keypad.w ? 1 : 0) - (Keypad.s ? 1 : 0));
     let X = 50 * ((Keypad.a ? 1 : 0) - (Keypad.d ? 1 : 0));
-    let Z = (Keypad.space ? -10 : 30);
-    let acceleration = new THREE.Vector3(X , Y , Z );
+    let Z = (Keypad.space ? -10 : gravity);
+    let acceleration = new THREE.Vector3(X, Y, Z );
 
     // Transform to local cordinates
     let normalMatrix = new THREE.Matrix3().getNormalMatrix(player.matrixWorld);
@@ -76,32 +91,29 @@ const update = () => {
     velocity.addScaledVector(acceleration, delta);
     player.position.addScaledVector(velocity, delta);
 
-    //Caculate ground
-    let planetHeight = 1;
-    let playerSize = 0.4 / 2;
-    let height = playerSize + planetHeight;
 
     // Caculate Atmosphere
     let friction = 0;
-    let playerHeight = player.position.length() - height;
-    friction = friction + 5 / Math.pow(1 + playerHeight / height, 2);
+    friction = friction + 5 / Math.pow(1 + (playerHeight - height) / height, 2);
 
     if (isNaN(friction)) 
         friction = 0;
 
     // Ground collision
-    if (player.position.length() < height) {
+    if (playerHeight < height) {
         player.position.clampLength(height, 100000);
-        friction = friction + 10;
+        friction = friction + 100;
         let speed = velocity.length();
        
         velocity.addScaledVector(direction, -velocity.dot(direction) / speed);
     }
 
+
+  
     // Apply friction.
     velocity.multiplyScalar(1 - friction * delta);
 
-    console.log(friction);
+   
 
     window.requestAnimationFrame(update);
 }
