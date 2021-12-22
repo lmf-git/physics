@@ -39,16 +39,16 @@ const solarSystem = {
             name: "lilOne",
             body: lilOne,
             surface: 1,
-            SOISise: 10,
-            surfaceGravity: 1000,
+            SOISise: 15,
+            surfaceGravity: 2000,
             children: []
         },
         {
             name: "lilOneTwo",
             body: lilOneTwo,
             surface: 1,
-            SOISise: 10,
-            surfaceGravity: 1000,
+            SOISise: 15,
+            surfaceGravity: 2000,
             children: []
         }
     ]
@@ -76,13 +76,17 @@ controls.enableDamping = true;
 
 const renderer = new THREE.WebGLRenderer({ canvas: canvas });
 
-var velocity = new THREE.Vector3(0, 0, 0);
+var velocity = new THREE.Vector3(0, 0, 10);
 var Keypad = { w: false, a: false, s: false, d: false, space: false }
 
 const update = () => {
     controls.update();
 
-    renderer.render(scene, camera);
+   
+
+
+    let delta = 0.01;
+
 
     let currentPlanet = currentItem;
 
@@ -145,9 +149,6 @@ const update = () => {
     // Look at the ground
     player.lookAt(planetbody.position);
 
-    let Altatude
-
-    let delta = 0.01;
 
     //Caculate ground
     let playerSize = 0.4 / 2;
@@ -170,8 +171,9 @@ const update = () => {
    
     // Move the player
     velocity.addScaledVector(acceleration, delta);
+    player.position.addScaledVector(acceleration, 0.5 * delta * delta);
     player.position.addScaledVector(velocity, delta);
-
+    playerHeight = player.position.length();
 
     // Caculate Atmosphere
     let friction = 0;
@@ -183,20 +185,22 @@ const update = () => {
     friction = 0;
 
     // Ground collision
-    if (playerHeight < height) {
+    if (playerHeight <= height) {
         player.position.clampLength(height, 100000);
-        friction = friction + 100;
+        friction = friction + 300;
         let speed = velocity.length();
        
         velocity.addScaledVector(direction, -velocity.dot(direction) / speed);
     }
 
-
-  
-    // Apply friction.
-    velocity.multiplyScalar(1 - friction * delta);
+    // Apply friction
+    let SpeedFactor = friction * delta;
+    if (SpeedFactor > 1) SpeedFactor = 1;
+    velocity.multiplyScalar(1 - SpeedFactor);
 
    
+    renderer.render(scene, camera);
+
 
     window.requestAnimationFrame(update);
 }
