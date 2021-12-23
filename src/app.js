@@ -93,7 +93,6 @@ const update = () => {
     player.getWorldPosition(worldPos);
     let playerHeight = player.position.length();
 
-    //
     //check soi
     let newPlanet = null;
     if (playerHeight > SoiLimit) {
@@ -102,7 +101,6 @@ const update = () => {
         const matches = currentPlanet.children.filter(item => {
             let distance2 = item.body.position.distanceToSquared(worldPos);
             return distance2 < item.SOISise * item.SOISise;
-
         });
         if (matches[0]) {
             newPlanet = matches[0];
@@ -129,7 +127,7 @@ const update = () => {
         //check the children here
     }
 
-     //look up planet infomation
+    // look up planet infomation
     let surfaceHeight = currentItem.surface;
     let surfaceGravity = currentItem.surfaceGravity;
     const planetbody = currentPlanet.body;
