@@ -4,22 +4,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 const canvas = document.querySelector('#canvas');
 const scene = new THREE.Scene;
 
-
-
-
-const lilOne = new THREE.Mesh(
-  new THREE.SphereGeometry(1, 20, 20),
-  new THREE.MeshBasicMaterial({ wireframe: true, color: 0x00ff00 })
-);
-const lilOneTwo = new THREE.Mesh(
-  new THREE.SphereGeometry(1, 20, 20),
-  new THREE.MeshBasicMaterial({ wireframe: true, color: 0x00ff00 })
-);
-const bigOne = new THREE.Mesh(
-  new THREE.SphereGeometry(5, 20, 20),
-  new THREE.MeshBasicMaterial({ wireframe: true, color: 0x00ff00 })
-);
-
 const player = new THREE.Mesh(
     new THREE.BoxGeometry(0.4, 0.4, 0.4),
     new THREE.MeshBasicMaterial({  color: 0xffff00 })
@@ -30,41 +14,61 @@ const player = new THREE.Mesh(
 //todo precaculate soi sise
 const solarSystem = {
     name: "sun",
-    body: bigOne,
     surface: 5,
     SOISise: 1000,
     surfaceGravity: 300,
+    color: 0x00ff00,
+    position: [0, 5, 0],
     children: [
         {
             name: "lilOne",
-            body: lilOne,
             surface: 1,
             SOISise: 15,
-            surfaceGravity: 2000,
-            children: []
+            surfaceGravity: 300,
+            children: [],
+            color: 0xffff00,
+            position: [15, 5, 10],
         },
         {
             name: "lilOneTwo",
-            body: lilOneTwo,
             surface: 1,
             SOISise: 15,
-            surfaceGravity: 2000,
-            children: []
+            surfaceGravity: 300,
+            children: [],
+            color: 0xffff00,
+            position: [5, 10, 20],
         }
     ]
 };
+
+
+const buildChildren = (item) => {
+    let body = new THREE.Mesh(
+        new THREE.SphereGeometry(item.surface, 20, 20),
+        new THREE.MeshBasicMaterial({ wireframe: true, color:item.color })
+    );
+    body.position.set(...item.position);
+    item.body = body;
+
+    if (item.children) {
+        item.children.forEach(element => body.add(buildChildren(element)));
+    };
+    return body;
+}
+
+
+
 
 var depthQueue = [solarSystem];
 var currentItem = solarSystem.children[1];
 
 
-player.position.set(5, 0, 0);
-lilOne.position.set(15, 5, 10)
-lilOneTwo.position.set(5, 10, 20)
-bigOne.position.set(15, 20, 5)
-scene.add(lilOne, lilOneTwo, bigOne);
 
-lilOneTwo.add(player);
+scene.add(buildChildren(solarSystem));
+player.position.set(0, 0, 2);
+currentItem.body.add(player);
+
+
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
 camera.position.set(0, 30, 30);
 scene.add(camera);
@@ -76,7 +80,7 @@ controls.enableDamping = true;
 
 const renderer = new THREE.WebGLRenderer({ canvas: canvas });
 
-var velocity = new THREE.Vector3(0, 0, 10);
+var velocity = new THREE.Vector3(0, 0, 0);
 var Keypad = { w: false, a: false, s: false, d: false, space: false }
 
 const update = () => {
@@ -103,7 +107,7 @@ const update = () => {
         newPlanet = depthQueue.pop();
     } else {
         const matches = currentPlanet.children.filter(item => {
-            let distance2 = item.body.position.distanceToSquared(worldPos);
+            let distance2 = item.body.position.distanceToSquared(player.position);
             return distance2 < item.SOISise * item.SOISise;
         });
         if (matches[0]) {
@@ -141,11 +145,15 @@ const update = () => {
     //caculate and set up direction(forward)
 
 
+    let planetWorldPos = new THREE.Vector3(0, 0, 1);
+    currentPlanet.body.getWorldPosition(planetWorldPos);
+   
+
     const altDirection = player.localToWorld(new THREE.Vector3(0, 1, 0)).sub(worldPos).normalize();
     player.up.set(altDirection.x, altDirection.y, altDirection.z);
 
     // Look at the ground
-    player.lookAt(planetbody.position);
+    player.lookAt(planetWorldPos);
 
 
     //Caculate ground
@@ -268,7 +276,3 @@ function onDocumentKeyUp(event) {
 
 
 // * SOI = Sphere of influence
-
-console.log(lilOne.position);
-console.log(lilOneTwo.position);
-console.log(bigOne.position);
