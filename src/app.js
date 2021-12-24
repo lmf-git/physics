@@ -4,6 +4,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 const canvas = document.querySelector('#canvas');
 const scene = new THREE.Scene;
 
+THREE.physicallyCorrectLights = true
+
+
 const player = new THREE.Mesh(
     new THREE.BoxGeometry(0.4, 0.4, 0.4),
     new THREE.MeshBasicMaterial({  color: 0xffff00 })
@@ -16,8 +19,9 @@ const solarSystem = {
     name: "sun",
     surface: 5,
     SOISise: 1000,
-    surfaceGravity: 300,
-    color: 0x00ff00,
+    surfaceGravity: 3000,
+    color: 0xffffff,
+    light:true,
     position: [0, 5, 0],
     children: [
         {
@@ -26,7 +30,7 @@ const solarSystem = {
             SOISise: 15,
             surfaceGravity: 300,
             children: [],
-            color: 0xffff00,
+            color: 0x00ffff,
             position: [15, 5, 10],
         },
         {
@@ -35,7 +39,7 @@ const solarSystem = {
             SOISise: 15,
             surfaceGravity: 300,
             children: [],
-            color: 0xffff00,
+            color: 0x00ff00,
             position: [5, 10, 20],
         }
     ]
@@ -43,21 +47,40 @@ const solarSystem = {
 
 
 const buildChildren = (item) => {
+
+    var Mat = { wireframe: false, color: item.color };
+    if (item.light) {
+        Mat.emissive = item.color;
+    }
+
     let body = new THREE.Mesh(
         new THREE.SphereGeometry(item.surface, 20, 20),
-        new THREE.MeshBasicMaterial({ wireframe: true, color:item.color })
+        new THREE.MeshStandardMaterial({ wireframe: false, color:item.color })
     );
-    body.position.set(...item.position);
+
+    let Atphmoshere = new THREE.Mesh(
+        new THREE.SphereGeometry(item.surface + 0.1, 20, 20),
+        new THREE.MeshStandardMaterial({ side: THREE.BackSide, color: 0x87CEEB, transparent: true, opacity: 0.1})
+    );
+
+    Atphmoshere.position.set(0,0,0);
+
     item.body = body;
+    item.body.add(Atphmoshere);
+    body.position.set(...item.position);
 
     if (item.children) {
         item.children.forEach(element => body.add(buildChildren(element)));
     };
+    if (item.light) {
+        item.body.add(new THREE.PointLight(item.color,5, item.SOISise , 2));
+    }
     return body;
 }
 
 
-
+const light = new THREE.AmbientLight(0x404040); // soft white light
+scene.add(light);
 
 var depthQueue = [solarSystem];
 var currentItem = solarSystem.children[1];
@@ -72,7 +95,6 @@ currentItem.body.add(player);
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
 camera.position.set(0, 30, 30);
 scene.add(camera);
-
 
 // Controls
 const controls = new OrbitControls(camera, canvas);
