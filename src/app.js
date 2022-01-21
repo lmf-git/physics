@@ -15,6 +15,7 @@ const player = new THREE.Mesh(
 const solarSystem = {
     name: "sun",
     surface: 5,
+    spin: 0.1,
     SOISise: 1000,
     surfaceGravity: 300,
     color: 0x00ff00,
@@ -22,6 +23,8 @@ const solarSystem = {
     children: [
         {
             name: "lilOne",
+            spin: 0.1,
+            velocity: 0.02,
             surface: 1,
             SOISise: 15,
             surfaceGravity: 300,
@@ -31,6 +34,8 @@ const solarSystem = {
         },
         {
             name: "lilOneTwo",
+            velocity: 0.01,
+            spin: 0.1,
             surface: 1,
             SOISise: 15,
             surfaceGravity: 300,
@@ -48,17 +53,20 @@ const buildChildren = (item) => {
         new THREE.MeshBasicMaterial({ wireframe: true, color:item.color })
     );
     body.position.set(...item.position);
+    item.pivot = new THREE.Group();
     item.body = body;
+    item.pivot.add(item.body);
+    CurrentPlanets.push(item);
 
     if (item.children) {
-        item.children.forEach(element => body.add(buildChildren(element)));
+        item.children.forEach(element => item.pivot.add(buildChildren(element)));
     };
-    return body;
+    return item.pivot;
 }
 
 
 
-
+var CurrentPlanets = [];
 var depthQueue = [solarSystem];
 var currentItem = solarSystem.children[1];
 
@@ -83,6 +91,8 @@ const renderer = new THREE.WebGLRenderer({ canvas: canvas });
 var velocity = new THREE.Vector3(0, 0, 0);
 var Keypad = { w: false, a: false, s: false, d: false, space: false }
 
+var Time = 0;
+
 const update = () => {
     controls.update();
 
@@ -90,7 +100,7 @@ const update = () => {
 
 
     let delta = 0.01;
-
+    Time += delta;
 
     let currentPlanet = currentItem;
 
@@ -204,7 +214,15 @@ const update = () => {
     if (SpeedFactor > 1) SpeedFactor = 1;
     velocity.multiplyScalar(1 - SpeedFactor);
 
-   
+
+    CurrentPlanets.forEach(element => {
+        if (element.velocity) {
+            element.pivot.rotation.y = 2 * Math.PI * element.velocity * Time;
+            element.body.rotation.y = 2 * Math.PI * element.spin * Time;
+        }
+    });
+
+
     renderer.render(scene, camera);
 
 
