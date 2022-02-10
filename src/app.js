@@ -71,18 +71,19 @@ const buildChildren = (item) => {
 
 const currentPlanets = [];
 const depthQueue = [solarSystem];
-let currentItem = solarSystem.children[1];
+let currentPlanet = solarSystem.children[1];
 
 
 
 scene.add(buildChildren(solarSystem));
 player.position.set(0, 0, 2);
-currentItem.body.add(player);
+currentPlanet.body.add(player);
 
 
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
 camera.position.set(0, 30, 30);
 scene.add(camera);
+
 
 
 // Controls
@@ -102,9 +103,8 @@ const update = () => {
     let delta = 0.01;
     time += delta;
 
-    let currentPlanet = currentItem;
 
-    let SoiLimit = currentItem.SOISise;
+    let SoiLimit = currentPlanet.SOISise;
 
     //get player data
     var worldPos = new THREE.Vector3(0, 0, 1);
@@ -140,14 +140,12 @@ const update = () => {
         let Bmat = new THREE.Matrix3().getNormalMatrix(newbody.matrixWorld);
         velocity = velocity.applyMatrix3(Amat).applyMatrix3(Bmat);
 
-        currentPlanet = currentItem = newitem;
-    } else {
-        // check the children here
+        currentPlanet = newitem;
     }
 
     // look up planet infomation
-    let surfaceHeight = currentItem.surface;
-    let surfaceGravity = currentItem.surfaceGravity;
+    let surfaceHeight = currentPlanet.surface;
+    let surfaceGravity = currentPlanet.surfaceGravity;
 
     // Caculate and set up direction(forward)
     const planetWorldPos = new THREE.Vector3(0, 0, 1);
@@ -172,10 +170,17 @@ const update = () => {
     let Z = (Keypad.space ? -10 : gravity);
     let acceleration = new THREE.Vector3(X, Y, Z );
 
+
+
+
     // Transform to local cordinates
-    let normalMatrix = new THREE.Matrix3().getNormalMatrix(player.matrixWorld);
+    let normalMatrix = new THREE.Matrix3().getNormalMatrix(player.matrix);
     acceleration.applyMatrix3(normalMatrix);
-   
+
+    console.log(acceleration);
+
+
+
     // Move the player
     velocity.addScaledVector(acceleration, delta);
     player.position.addScaledVector(acceleration, 0.5 * delta * delta);
@@ -184,7 +189,7 @@ const update = () => {
 
     // Caculate Atmosphere
     let friction = 0;
-    friction = friction + 5 / Math.pow(1 + (playerHeight - height) / height, 2);
+    //friction = friction + 5 / Math.pow(1 + (playerHeight - height) / height, 2);
 
     if (isNaN(friction)) 
         friction = 0;
@@ -211,6 +216,7 @@ const update = () => {
             element.body.rotation.y = 2 * Math.PI * element.spin * time;
         }
     });
+
 
 
     renderer.render(scene, camera);
