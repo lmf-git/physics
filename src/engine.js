@@ -5,7 +5,8 @@ let velocity = new THREE.Vector3(0, 0, 0);
 let time = 0;
 
 export default function engine() {
-    const delta = time + 0.01;
+    const delta = 0.01;
+    time = time + delta;
 
     let currentSOI = WORLD.current_planet;
     let soiLimit = WORLD.current_planet.SOISize;
@@ -75,7 +76,7 @@ export default function engine() {
     let acceleration = new THREE.Vector3(X, Y, Z );
 
     // Transform to local cordinates
-    let normalMatrix = new THREE.Matrix3().getNormalMatrix(WORLD.player.matrixWorld);
+    let normalMatrix = new THREE.Matrix3().getNormalMatrix(WORLD.player.matrix);
     acceleration.applyMatrix3(normalMatrix);
    
     // Move the player
