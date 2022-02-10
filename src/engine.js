@@ -1,18 +1,13 @@
 import * as THREE from 'three';
 import Controls from './controls';
 
-
 let velocity = new THREE.Vector3(0, 0, 0);
 let time = 0;
 
 export default function engine() {
-    WORLD.controls.update();
+    const delta = time + 0.01;
 
-    let delta = 0.01;
-    time += delta;
-
-    let currentPlanet = WORLD.current_planet;
-
+    let currentSOI = WORLD.current_planet;
     let soiLimit = WORLD.current_planet.SOISize;
 
     // get player data
@@ -20,37 +15,36 @@ export default function engine() {
     WORLD.player.getWorldPosition(worldPos);
     let playerHeight = WORLD.player.position.length();
 
-    //check soi
+    // check soi
     let newPlanet = null;
     if (playerHeight > soiLimit) {
         newPlanet = WORLD.depth_queue.pop();
     } else {
-        const matches = currentPlanet.children.filter(item => {
+        const matches = currentSOI.children.filter(item => {
             let distance2 = item.body.position.distanceToSquared(WORLD.player.position);
             return distance2 < item.SOISize * item.SOISize;
         });
         if (matches[0]) {
             newPlanet = matches[0];
-            WORLD.depth_queue.push(currentPlanet);
+            WORLD.depth_queue.push(currentSOI);
         }
     }
 
     //change planet if needed
-    if (newPlanet) { //leaving the soi
-
+    if (newPlanet) { 
+        //leaving the soi
         const newitem = newPlanet;
-        const oldbody = currentPlanet.body;
+        const oldbody = currentSOI.body;
         const newbody = newitem.body;
         newbody.attach(WORLD.player);
 
-        // Transform velocity to new cordinate frame
+        // Transform velocity to new coordinate frame
         let Amat = new THREE.Matrix3().getNormalMatrix(oldbody.matrixWorld).invert();
         let Bmat = new THREE.Matrix3().getNormalMatrix(newbody.matrixWorld);
-        velocity = velocity.applyMatrix3(Amat).applyMatrix3(Bmat);
 
-        currentPlanet = WORLD.current_planet = newitem;
-    } else {
-        // check the children here
+        // Apply gravity capture velocity and newest SOI.
+        velocity = velocity.applyMatrix3(Amat).applyMatrix3(Bmat);
+        currentSOI = WORLD.current_planet = newitem;
     }
 
     // look up planet infomation
@@ -59,7 +53,7 @@ export default function engine() {
 
     // Caculate and set up direction(forward)
     const planetWorldPos = new THREE.Vector3(0, 0, 1);
-    currentPlanet.body.getWorldPosition(planetWorldPos);
+    currentSOI.body.getWorldPosition(planetWorldPos);
     const altDirection = WORLD.player.localToWorld(new THREE.Vector3(0, 1, 0)).sub(worldPos).normalize();
     WORLD.player.up.set(altDirection.x, altDirection.y, altDirection.z);
 
@@ -94,8 +88,8 @@ export default function engine() {
     let friction = 0;
     friction = friction + 5 / Math.pow(1 + (playerHeight - height) / height, 2);
 
-    if (isNaN(friction)) 
-        friction = 0;
+    // Reset friction if it becomes too extreme/corrupted.
+    if (isNaN(friction)) friction = 0;
 
     // Ground collision
     if (playerHeight <= height) {
@@ -120,6 +114,7 @@ export default function engine() {
         }
     });
 
+    WORLD.controls.update();
     WORLD.renderer.render(WORLD.scene, WORLD.camera);
     window.requestAnimationFrame(engine);
 }
