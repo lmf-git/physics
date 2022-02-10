@@ -19,7 +19,7 @@ const solarSystem = {
     name: "sun",
     surface: 5,
     spin: 0.1,
-    SOISise: 1000,
+    SOISize: 1000,
     surfaceGravity: 300,
     color: 0x00ff00,
     position: [0, 5, 0],
@@ -29,7 +29,7 @@ const solarSystem = {
             spin: 0.1,
             velocity: 0.02,
             surface: 1,
-            SOISise: 15,
+            SOISize: 15,
             surfaceGravity: 300,
             children: [],
             color: 0xffff00,
@@ -40,7 +40,7 @@ const solarSystem = {
             velocity: 0.01,
             spin: 0.1,
             surface: 1,
-            SOISise: 15,
+            SOISize: 15,
             surfaceGravity: 300,
             children: [],
             color: 0xffff00,
@@ -104,7 +104,7 @@ const update = () => {
 
     let currentPlanet = currentItem;
 
-    let SoiLimit = currentItem.SOISise;
+    let SoiLimit = currentItem.SOISize;
 
     //get player data
     var worldPos = new THREE.Vector3(0, 0, 1);
@@ -118,13 +118,12 @@ const update = () => {
     } else {
         const matches = currentPlanet.children.filter(item => {
             let distance2 = item.body.position.distanceToSquared(player.position);
-            return distance2 < item.SOISise * item.SOISise;
+            return distance2 < item.SOISize * item.SOISize;
         });
         if (matches[0]) {
             newPlanet = matches[0];
             depthQueue.push(currentPlanet);
         }
-        
     }
 
     //change planet if needed
