@@ -7,37 +7,37 @@ export default class Controls {
         space: false 
     }
     static initialise() {        
-        function onDocumentKeyDown(event) {
+        const onDocumentKeyDown = (event) => {
             let keyCode = event.which;
         
             if (keyCode == 87) {
-                Keypad.w = true;
+                this.Keypad.w = true;
             } else if (keyCode == 83) {
-                Keypad.s = true;
+                this.Keypad.s = true;
             } else if (keyCode == 65) {
-                Keypad.a = true;
+                this.Keypad.a = true;
             } else if (keyCode == 68) {
-                Keypad.d = true;
+                this.Keypad.d = true;
             } else if (keyCode == 32) {
-                Keypad.space = true;
+                this.Keypad.space = true;
             }
             return false;
         };
         
         
-        function onDocumentKeyUp(event) {
+        const onDocumentKeyUp = (event) => {
             let keyCode = event.which;
         
             if (keyCode == 87) {
-                Keypad.w = false;
+                this.Keypad.w = false;
             } else if (keyCode == 83) {
-                Keypad.s = false;
+                this.Keypad.s = false;
             } else if (keyCode == 65) {
-                Keypad.a = false;
+                this.Keypad.a = false;
             } else if (keyCode == 68) {
-                Keypad.d = false;
+                this.Keypad.d = false;
             } else if (keyCode == 32) {
-                Keypad.space = false;
+                this.Keypad.space = false;
             }
             return false;
         };

@@ -41,7 +41,7 @@ export default function engine() {
         const newitem = newPlanet;
         const oldbody = currentPlanet.body;
         const newbody = newitem.body;
-        newbody.attach(player);
+        newbody.attach(WORLD.player);
 
         // Transform velocity to new cordinate frame
         let Amat = new THREE.Matrix3().getNormalMatrix(oldbody.matrixWorld).invert();
