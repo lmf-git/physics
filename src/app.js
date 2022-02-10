@@ -1,14 +1,11 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import SOLAR_SYSTEM from './solarSystem';
 import Controls from './controls';
 import engine from './engine';
-import SOLAR_SYSTEM from './solarSystem';
+import buildSolarSystem from './buildSolarSystem';
+import resizer from './resizer';
 
-/** NEXT STEPS */
-// Treat player(s) as an array for easier network integration.
-// Get in spaceship (cube)
-// Escape orbit, enter different SOI*
-// Modularise/organise code
 
 const canvas = document.querySelector('#canvas');
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
@@ -33,51 +30,21 @@ WORLD.controls.enableDamping = true;
 
 WORLD.player = new THREE.Mesh(
     new THREE.BoxGeometry(0.4, 0.4, 0.4),
-    new THREE.MeshBasicMaterial({  color: 0xffff00 })
+    new THREE.MeshBasicMaterial({ color: 0xffff00 })
 );
-
-const buildChildren = (item) => {
-    let body = new THREE.Mesh(
-        new THREE.SphereGeometry(item.surface, 20, 20),
-        new THREE.MeshBasicMaterial({ wireframe: true, color:item.color })
-    );
-    body.position.set(...item.position);
-    item.pivot = new THREE.Group();
-    item.body = body;
-    item.pivot.add(item.body);
-    WORLD.planets.push(item);
-
-    if (item.children) {
-        item.children.forEach(element => item.pivot.add(buildChildren(element)));
-    };
-    return item.pivot;
-}
-
-WORLD.scene.add(buildChildren(WORLD.solar_system));
 WORLD.player.position.set(0, 0, 2);
 
 
+WORLD.scene.add(buildSolarSystem(WORLD.solar_system));
 WORLD.solar_system.children[1].body.add(WORLD.player);
-
 
 // Configure and add camera.
 camera.position.set(0, 30, 30);
 WORLD.scene.add(WORLD.camera);
 
 
-const resize = () => {
-  // Update camera
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-
-  // Update renderer
-  WORLD.renderer.setSize(window.innerWidth, window.innerHeight);
-  WORLD.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-};
-window.addEventListener('resize', resize);
-
-resize();
-
-engine();
+resizer();
 
 Controls.initialise();
+
+engine();
