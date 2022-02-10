@@ -64,9 +64,6 @@ camera.position.set(0, 30, 30);
 WORLD.scene.add(WORLD.camera);
 
 
-
-
-
 const resize = () => {
   // Update camera
   camera.aspect = window.innerWidth / window.innerHeight;
