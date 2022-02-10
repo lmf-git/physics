@@ -6,7 +6,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // Escape orbit, enter different SOI*
 // Modularise/organise code
 
-
 const canvas = document.querySelector('#canvas');
 const scene = new THREE.Scene;
 
@@ -104,16 +103,16 @@ const update = () => {
 
     let currentPlanet = currentItem;
 
-    let SoiLimit = currentItem.SOISize;
+    let soiLimit = currentItem.SOISize;
 
-    //get player data
-    var worldPos = new THREE.Vector3(0, 0, 1);
+    // get player data
+    let worldPos = new THREE.Vector3(0, 0, 1);
     player.getWorldPosition(worldPos);
     let playerHeight = player.position.length();
 
     //check soi
     let newPlanet = null;
-    if (playerHeight > SoiLimit) {
+    if (playerHeight > soiLimit) {
         newPlanet = depthQueue.pop();
     } else {
         const matches = currentPlanet.children.filter(item => {
@@ -237,7 +236,8 @@ document.addEventListener("keydown", onDocumentKeyDown, false);
 document.addEventListener("keyup", onDocumentKeyUp, false);
 
 function onDocumentKeyDown(event) {
-    var keyCode = event.which;
+    let keyCode = event.which;
+
     if (keyCode == 87) {
         Keypad.w = true;
     } else if (keyCode == 83) {
@@ -254,7 +254,7 @@ function onDocumentKeyDown(event) {
 
 
 function onDocumentKeyUp(event) {
-    var keyCode = event.which;
+    let keyCode = event.which;
 
     if (keyCode == 87) {
         Keypad.w = false;
