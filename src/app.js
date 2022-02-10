@@ -1,6 +1,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
+/** NEXT STEPS */
+// Get in spaceship (cube)
+// Escape orbit, enter different SOI*
+// Modularise/organise code
+
+
 const canvas = document.querySelector('#canvas');
 const scene = new THREE.Scene;
 
@@ -9,9 +15,6 @@ const player = new THREE.Mesh(
     new THREE.MeshBasicMaterial({  color: 0xffff00 })
 );
 
-
-
-//todo precaculate soi sise
 const solarSystem = {
     name: "sun",
     surface: 5,
@@ -56,7 +59,7 @@ const buildChildren = (item) => {
     item.pivot = new THREE.Group();
     item.body = body;
     item.pivot.add(item.body);
-    CurrentPlanets.push(item);
+    currentPlanets.push(item);
 
     if (item.children) {
         item.children.forEach(element => item.pivot.add(buildChildren(element)));
@@ -66,9 +69,9 @@ const buildChildren = (item) => {
 
 
 
-var CurrentPlanets = [];
-var depthQueue = [solarSystem];
-var currentItem = solarSystem.children[1];
+const currentPlanets = [];
+const depthQueue = [solarSystem];
+let currentItem = solarSystem.children[1];
 
 
 
@@ -88,19 +91,16 @@ controls.enableDamping = true;
 
 const renderer = new THREE.WebGLRenderer({ canvas: canvas });
 
-var velocity = new THREE.Vector3(0, 0, 0);
-var Keypad = { w: false, a: false, s: false, d: false, space: false }
+let velocity = new THREE.Vector3(0, 0, 0);
+let Keypad = { w: false, a: false, s: false, d: false, space: false }
 
-var Time = 0;
+let time = 0;
 
 const update = () => {
     controls.update();
 
-   
-
-
     let delta = 0.01;
-    Time += delta;
+    time += delta;
 
     let currentPlanet = currentItem;
 
@@ -142,41 +142,32 @@ const update = () => {
 
         currentPlanet = currentItem = newitem;
     } else {
-        //check the children here
+        // check the children here
     }
 
     // look up planet infomation
     let surfaceHeight = currentItem.surface;
     let surfaceGravity = currentItem.surfaceGravity;
-    const planetbody = currentPlanet.body;
 
-    let direction = player.position.clone().normalize();
-
-    //caculate and set up direction(forward)
-
-
-    let planetWorldPos = new THREE.Vector3(0, 0, 1);
+    // Caculate and set up direction(forward)
+    const planetWorldPos = new THREE.Vector3(0, 0, 1);
     currentPlanet.body.getWorldPosition(planetWorldPos);
-   
-
     const altDirection = player.localToWorld(new THREE.Vector3(0, 1, 0)).sub(worldPos).normalize();
     player.up.set(altDirection.x, altDirection.y, altDirection.z);
 
     // Look at the ground
     player.lookAt(planetWorldPos);
 
-
-    //Caculate ground
+    // Caculate ground
     let playerSize = 0.4 / 2;
     let height = playerSize + surfaceHeight;
     
-
-    //Caculate Gravity
+    // Caculate Gravity
     let heightScaled = playerHeight / surfaceHeight;
     let gravity = surfaceGravity / (heightScaled * heightScaled);
 
     // Move player
-    let Y = 50 *((Keypad.w ? 1 : 0) - (Keypad.s ? 1 : 0));
+    let Y = 50 * ((Keypad.w ? 1 : 0) - (Keypad.s ? 1 : 0));
     let X = 50 * ((Keypad.a ? 1 : 0) - (Keypad.d ? 1 : 0));
     let Z = (Keypad.space ? -10 : gravity);
     let acceleration = new THREE.Vector3(X, Y, Z );
@@ -198,14 +189,13 @@ const update = () => {
     if (isNaN(friction)) 
         friction = 0;
 
-    friction = 0;
-
     // Ground collision
     if (playerHeight <= height) {
         player.position.clampLength(height, 100000);
-        friction = friction + 300;
-        let speed = velocity.length();
+        friction += 300;
+        const speed = velocity.length();
        
+        const direction = player.position.clone().normalize();
         velocity.addScaledVector(direction, -velocity.dot(direction) / speed);
     }
 
@@ -215,17 +205,15 @@ const update = () => {
     velocity.multiplyScalar(1 - SpeedFactor);
 
 
-    CurrentPlanets.forEach(element => {
+    currentPlanets.forEach(element => {
         if (element.velocity) {
-            element.pivot.rotation.y = 2 * Math.PI * element.velocity * Time;
-            element.body.rotation.y = 2 * Math.PI * element.spin * Time;
+            element.pivot.rotation.y = 2 * Math.PI * element.velocity * time;
+            element.body.rotation.y = 2 * Math.PI * element.spin * time;
         }
     });
 
 
     renderer.render(scene, camera);
-
-
     window.requestAnimationFrame(update);
 }
 
@@ -282,15 +270,3 @@ function onDocumentKeyUp(event) {
     }
     return false;
 };
-
-
-/** NEXT STEPS */
-// Movement around the planet - done
-// Fake gravity - done
-// real gravity - done
-// Get into orbit - done
-// Get in spaceship (cube)
-// Escape orbit, enter different SOI*
-
-
-// * SOI = Sphere of influence
