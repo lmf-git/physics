@@ -1,5 +1,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import Controls from './controls';
+import engine from './engine';
+import SOLAR_SYSTEM from './solarSystem';
 
 /** NEXT STEPS */
 // Get in spaceship (cube)
@@ -7,47 +10,30 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 // Modularise/organise code
 
 const canvas = document.querySelector('#canvas');
-const scene = new THREE.Scene;
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
 
-const player = new THREE.Mesh(
+// Global state/access.
+window.WORLD = {
+    renderer: new THREE.WebGLRenderer({ canvas: canvas }),
+    scene: new THREE.Scene,
+    controls: new OrbitControls(camera, canvas),
+    camera,
+    
+    solar_system: SOLAR_SYSTEM,
+    planets: [],
+
+    depth_queue: [SOLAR_SYSTEM],
+    player: null,
+    current_planet: SOLAR_SYSTEM.children[1]
+};
+
+// Configure controls.
+WORLD.controls.enableDamping = true;
+
+WORLD.player = new THREE.Mesh(
     new THREE.BoxGeometry(0.4, 0.4, 0.4),
     new THREE.MeshBasicMaterial({  color: 0xffff00 })
 );
-
-const solarSystem = {
-    name: "sun",
-    surface: 5,
-    spin: 0.1,
-    SOISize: 1000,
-    surfaceGravity: 300,
-    color: 0x00ff00,
-    position: [0, 5, 0],
-    children: [
-        {
-            name: "lilOne",
-            spin: 0.1,
-            velocity: 0.02,
-            surface: 1,
-            SOISize: 15,
-            surfaceGravity: 300,
-            children: [],
-            color: 0xffff00,
-            position: [15, 5, 10],
-        },
-        {
-            name: "lilOneTwo",
-            velocity: 0.01,
-            spin: 0.1,
-            surface: 1,
-            SOISize: 15,
-            surfaceGravity: 300,
-            children: [],
-            color: 0xffff00,
-            position: [5, 10, 20],
-        }
-    ]
-};
-
 
 const buildChildren = (item) => {
     let body = new THREE.Mesh(
@@ -58,7 +44,7 @@ const buildChildren = (item) => {
     item.pivot = new THREE.Group();
     item.body = body;
     item.pivot.add(item.body);
-    currentPlanets.push(item);
+    WORLD.planets.push(item);
 
     if (item.children) {
         item.children.forEach(element => item.pivot.add(buildChildren(element)));
@@ -66,154 +52,19 @@ const buildChildren = (item) => {
     return item.pivot;
 }
 
+WORLD.scene.add(buildChildren(WORLD.solar_system));
+WORLD.player.position.set(0, 0, 2);
 
 
-const currentPlanets = [];
-const depthQueue = [solarSystem];
-let currentItem = solarSystem.children[1];
+WORLD.solar_system.children[1].body.add(WORLD.player);
 
 
-
-scene.add(buildChildren(solarSystem));
-player.position.set(0, 0, 2);
-currentItem.body.add(player);
-
-
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
+// Configure and add camera.
 camera.position.set(0, 30, 30);
-scene.add(camera);
+WORLD.scene.add(WORLD.camera);
 
 
-// Controls
-const controls = new OrbitControls(camera, canvas);
-controls.enableDamping = true;
 
-const renderer = new THREE.WebGLRenderer({ canvas: canvas });
-
-let velocity = new THREE.Vector3(0, 0, 0);
-let Keypad = { w: false, a: false, s: false, d: false, space: false }
-
-let time = 0;
-
-const update = () => {
-    controls.update();
-
-    let delta = 0.01;
-    time += delta;
-
-    let currentPlanet = currentItem;
-
-    let soiLimit = currentItem.SOISize;
-
-    // get player data
-    let worldPos = new THREE.Vector3(0, 0, 1);
-    player.getWorldPosition(worldPos);
-    let playerHeight = player.position.length();
-
-    //check soi
-    let newPlanet = null;
-    if (playerHeight > soiLimit) {
-        newPlanet = depthQueue.pop();
-    } else {
-        const matches = currentPlanet.children.filter(item => {
-            let distance2 = item.body.position.distanceToSquared(player.position);
-            return distance2 < item.SOISize * item.SOISize;
-        });
-        if (matches[0]) {
-            newPlanet = matches[0];
-            depthQueue.push(currentPlanet);
-        }
-    }
-
-    //change planet if needed
-    if (newPlanet) { //leaving the soi
-
-        const newitem = newPlanet;
-        const oldbody = currentPlanet.body;
-        const newbody = newitem.body;
-        newbody.attach(player);
-
-        // Transform velocity to new cordinate frame
-        let Amat = new THREE.Matrix3().getNormalMatrix(oldbody.matrixWorld).invert();
-        let Bmat = new THREE.Matrix3().getNormalMatrix(newbody.matrixWorld);
-        velocity = velocity.applyMatrix3(Amat).applyMatrix3(Bmat);
-
-        currentPlanet = currentItem = newitem;
-    } else {
-        // check the children here
-    }
-
-    // look up planet infomation
-    let surfaceHeight = currentItem.surface;
-    let surfaceGravity = currentItem.surfaceGravity;
-
-    // Caculate and set up direction(forward)
-    const planetWorldPos = new THREE.Vector3(0, 0, 1);
-    currentPlanet.body.getWorldPosition(planetWorldPos);
-    const altDirection = player.localToWorld(new THREE.Vector3(0, 1, 0)).sub(worldPos).normalize();
-    player.up.set(altDirection.x, altDirection.y, altDirection.z);
-
-    // Look at the ground
-    player.lookAt(planetWorldPos);
-
-    // Caculate ground
-    let playerSize = 0.4 / 2;
-    let height = playerSize + surfaceHeight;
-    
-    // Caculate Gravity
-    let heightScaled = playerHeight / surfaceHeight;
-    let gravity = surfaceGravity / (heightScaled * heightScaled);
-
-    // Move player
-    let Y = 50 * ((Keypad.w ? 1 : 0) - (Keypad.s ? 1 : 0));
-    let X = 50 * ((Keypad.a ? 1 : 0) - (Keypad.d ? 1 : 0));
-    let Z = (Keypad.space ? -10 : gravity);
-    let acceleration = new THREE.Vector3(X, Y, Z );
-
-    // Transform to local cordinates
-    let normalMatrix = new THREE.Matrix3().getNormalMatrix(player.matrixWorld);
-    acceleration.applyMatrix3(normalMatrix);
-   
-    // Move the player
-    velocity.addScaledVector(acceleration, delta);
-    player.position.addScaledVector(acceleration, 0.5 * delta * delta);
-    player.position.addScaledVector(velocity, delta);
-    playerHeight = player.position.length();
-
-    // Caculate Atmosphere
-    let friction = 0;
-    friction = friction + 5 / Math.pow(1 + (playerHeight - height) / height, 2);
-
-    if (isNaN(friction)) 
-        friction = 0;
-
-    // Ground collision
-    if (playerHeight <= height) {
-        player.position.clampLength(height, 100000);
-        friction += 300;
-        const speed = velocity.length();
-       
-        const direction = player.position.clone().normalize();
-        velocity.addScaledVector(direction, -velocity.dot(direction) / speed);
-    }
-
-    // Apply friction
-    let SpeedFactor = friction * delta;
-    if (SpeedFactor > 1) SpeedFactor = 1;
-    velocity.multiplyScalar(1 - SpeedFactor);
-
-
-    currentPlanets.forEach(element => {
-        if (element.velocity) {
-            element.pivot.rotation.y = 2 * Math.PI * element.velocity * time;
-            element.body.rotation.y = 2 * Math.PI * element.spin * time;
-        }
-    });
-
-
-    renderer.render(scene, camera);
-    window.requestAnimationFrame(update);
-}
 
 
 const resize = () => {
@@ -222,50 +73,13 @@ const resize = () => {
   camera.updateProjectionMatrix();
 
   // Update renderer
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  WORLD.renderer.setSize(window.innerWidth, window.innerHeight);
+  WORLD.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 };
 window.addEventListener('resize', resize);
 
 resize();
 
-update();
+engine();
 
-
-document.addEventListener("keydown", onDocumentKeyDown, false);
-document.addEventListener("keyup", onDocumentKeyUp, false);
-
-function onDocumentKeyDown(event) {
-    let keyCode = event.which;
-
-    if (keyCode == 87) {
-        Keypad.w = true;
-    } else if (keyCode == 83) {
-        Keypad.s = true;
-    } else if (keyCode == 65) {
-        Keypad.a = true;
-    } else if (keyCode == 68) {
-        Keypad.d = true;
-    } else if (keyCode == 32) {
-        Keypad.space = true;
-    }
-    return false;
-};
-
-
-function onDocumentKeyUp(event) {
-    let keyCode = event.which;
-
-    if (keyCode == 87) {
-        Keypad.w = false;
-    } else if (keyCode == 83) {
-        Keypad.s = false;
-    } else if (keyCode == 65) {
-        Keypad.a = false;
-    } else if (keyCode == 68) {
-        Keypad.d = false;
-    } else if (keyCode == 32) {
-        Keypad.space = false;
-    }
-    return false;
-};
+Controls.initialise();
