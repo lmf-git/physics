@@ -94,9 +94,10 @@ export default function engine() {
     // Ground collision
     if (playerHeight <= height) {
         WORLD.player.position.clampLength(height, 100000);
+        
         friction += 300;
+
         const speed = velocity.length();
-       
         const direction = WORLD.player.position.clone().normalize();
         velocity.addScaledVector(direction, -velocity.dot(direction) / speed);
     }
