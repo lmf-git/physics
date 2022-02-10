@@ -112,7 +112,7 @@ const update = () => {
 
     //check soi
     let newPlanet = null;
-    if (playerHeight > soiLimit) {
+    if (playerHeight > SoiLimit) {
         newPlanet = depthQueue.pop();
     } else {
         const matches = currentPlanet.children.filter(item => {
