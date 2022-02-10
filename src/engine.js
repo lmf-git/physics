@@ -31,9 +31,9 @@ export default function engine() {
         }
     }
 
-    //change planet if needed
+    // change planet if needed
     if (newPlanet) { 
-        //leaving the soi
+        // leaving the soi
         const newitem = newPlanet;
         const oldbody = currentSOI.body;
         const newbody = newitem.body;
@@ -108,7 +108,7 @@ export default function engine() {
     if (speedFactor > 1) speedFactor = 1;
     velocity.multiplyScalar(1 - speedFactor);
 
-
+    // Rotate the planets.
     WORLD.planets.forEach(element => {
         if (element.velocity) {
             element.pivot.rotation.y = 2 * Math.PI * element.velocity * time;
