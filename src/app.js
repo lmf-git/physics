@@ -19,23 +19,26 @@ window.WORLD = {
     solar_system: SOLAR_SYSTEM,
     planets: [],
 
-    depth_queue: [SOLAR_SYSTEM],
-    player: null,
-    current_planet: SOLAR_SYSTEM.children[1]
+    players: []
 };
 
 // Configure controls.
 WORLD.controls.enableDamping = true;
 
-WORLD.player = new THREE.Mesh(
-    new THREE.BoxGeometry(0.4, 0.4, 0.4),
-    new THREE.MeshBasicMaterial({ color: 0xffff00 })
-);
-WORLD.player.position.set(0, 0, 2);
+
+WORLD.players.push({
+    mesh: new THREE.Mesh(
+        new THREE.BoxGeometry(0.4, 0.4, 0.4),
+        new THREE.MeshBasicMaterial({ color: 0xffff00 })
+    ),
+    current_planet: SOLAR_SYSTEM.children[1],
+    depth_queue: [SOLAR_SYSTEM]
+});
+WORLD.players[0].mesh.position.set(0, 0, 2);
 
 
 WORLD.scene.add(buildSolarSystem(WORLD.solar_system));
-WORLD.solar_system.children[1].body.add(WORLD.player);
+WORLD.solar_system.children[1].body.add(WORLD.players[0].mesh);
 
 // Configure and add camera.
 camera.position.set(0, 30, 30);
