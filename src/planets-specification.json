@@ -2,32 +2,32 @@
     "name": "sun",
     "surface": 5,
     "spin": 0.1,
-    "SOISize": 1000,
+    "SOISize": 3000,
     "surfaceGravity": 300,
     "color": "#00ff00",
-    "position": [0, 5, 0],
+    "position": [0, 0, 0],
     "children": [
         {
             "name": "lilOne",
             "spin": 0.1,
             "velocity": 0.02,
             "surface": 1,
-            "SOISize": 15,
+            "SOISize": 400,
             "surfaceGravity": 300,
             "children": [],
             "color": "#ffff00",
-            "position": [15, 5, 10]
+            "position": [15, 10, 5]
         },
         {
             "name": "lilOneTwo",
             "velocity": 0.01,
             "spin": 0.1,
             "surface": 1,
-            "SOISize": 15,
+            "SOISize": 600,
             "surfaceGravity": 300,
             "children": [],
             "color": "#ffff00",
-            "position": [5, 10, 20]
+            "position": [15, 20, 30]
         }
     ]
 }
