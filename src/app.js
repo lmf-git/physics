@@ -27,11 +27,9 @@ window.WORLD = {
 WORLD.controls.enableDamping = true;
 
 
-
+// Add testing player (refactor into networking later).
 const player = new Player();
-
 WORLD.players.push(player);
-
 WORLD.players[0].mesh.position.set(2, 2, 2);
 
 
