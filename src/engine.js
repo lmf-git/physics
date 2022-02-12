@@ -10,8 +10,8 @@ export default function engine() {
 
     // Apply gravity to all players.
     WORLD.players.map(player => {
+        const soiLimit = player.current_planet.SOISize;
         let currentSOI = player.current_planet;
-        let soiLimit = player.current_planet.SOISize;
     
         // get player data
         let worldPos = new THREE.Vector3(0, 0, 1);
@@ -114,8 +114,8 @@ export default function engine() {
     // Rotate the planets.
     WORLD.planets.forEach(element => {
         if (element.velocity) {
-            // element.pivot.rotation.y = 2 * Math.PI * element.velocity * time;
-            // element.body.rotation.y = 2 * Math.PI * element.spin * time;
+            element.pivot.rotation.y = 2 * Math.PI * element.velocity * time;
+            element.body.rotation.y = 2 * Math.PI * element.spin * time;
         }
     });
 
