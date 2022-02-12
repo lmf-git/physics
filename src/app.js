@@ -4,7 +4,6 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import Controls from './controls';
 import engine from './engine';
 import buildSolarSystem from './buildSolarSystem';
-import resizer from './resizer';
 
 import PLANETS_SPECIFICATION from './planets-specification.json';
 
@@ -35,7 +34,7 @@ WORLD.players.push({
     current_planet: PLANETS_SPECIFICATION.children[1],
     depth_queue: [PLANETS_SPECIFICATION]
 });
-WORLD.players[0].mesh.position.set(0, 0, 2);
+WORLD.players[0].mesh.position.set(2, 2, 2);
 
 
 WORLD.scene.add(buildSolarSystem(PLANETS_SPECIFICATION));
@@ -46,6 +45,16 @@ camera.position.set(0, 30, 30);
 WORLD.scene.add(WORLD.camera);
 
 
+function resizer() {
+    // Update camera
+    WORLD.camera.aspect = window.innerWidth / window.innerHeight;
+    WORLD.camera.updateProjectionMatrix();
+  
+    // Update renderer
+    WORLD.renderer.setSize(window.innerWidth, window.innerHeight);
+    WORLD.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+};
+window.addEventListener('resize', resizer);
 resizer();
 
 Controls.initialise();

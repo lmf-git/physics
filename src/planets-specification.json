@@ -4,7 +4,7 @@
     "spin": 0.1,
     "SOISize": 1000,
     "surfaceGravity": 300,
-    "color": "0x00ff00",
+    "color": "#00ff00",
     "position": [0, 5, 0],
     "children": [
         {
@@ -15,7 +15,7 @@
             "SOISize": 15,
             "surfaceGravity": 300,
             "children": [],
-            "color": "0xffff00",
+            "color": "#ffff00",
             "position": [15, 5, 10]
         },
         {
@@ -26,7 +26,7 @@
             "SOISize": 15,
             "surfaceGravity": 300,
             "children": [],
-            "color": "0xffff00",
+            "color": "#ffff00",
             "position": [5, 10, 20]
         }
     ]
