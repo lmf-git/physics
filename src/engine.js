@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import Controls from './controls';
 
-let velocity = new THREE.Vector3(0, 0, 0);
+
 let time = 0;
 
 export default function engine() {
@@ -46,7 +46,7 @@ export default function engine() {
             let Bmat = new THREE.Matrix3().getNormalMatrix(newbody.matrixWorld);
     
             // Apply gravity capture velocity and newest SOI.
-            velocity = velocity.applyMatrix3(Amat).applyMatrix3(Bmat);
+            player.velocity = player.velocity.applyMatrix3(Amat).applyMatrix3(Bmat);
             currentSOI = player.current_planet = newitem;
         }
     
@@ -82,9 +82,9 @@ export default function engine() {
         acceleration.applyMatrix3(normalMatrix);
        
         // Move the player
-        velocity.addScaledVector(acceleration, delta);
+        player.velocity.addScaledVector(acceleration, delta);
         player.mesh.position.addScaledVector(acceleration, 0.5 * delta * delta);
-        player.mesh.position.addScaledVector(velocity, delta);
+        player.mesh.position.addScaledVector(player.velocity, delta);
         playerHeight = player.mesh.position.length();
     
         // Caculate Atmosphere
@@ -100,15 +100,15 @@ export default function engine() {
             
             friction += 300;
     
-            const speed = velocity.length();
+            const speed = player.velocity.length();
             const direction = player.mesh.position.clone().normalize();
-            velocity.addScaledVector(direction, -velocity.dot(direction) / speed);
+            player.velocity.addScaledVector(direction, -player.velocity.dot(direction) / speed);
         }
 
         // Apply friction
         let speedFactor = friction * delta;
         if (speedFactor > 1) speedFactor = 1;
-        velocity.multiplyScalar(1 - speedFactor);
+        player.velocity.multiplyScalar(1 - speedFactor);
     });
 
     // Rotate the planets.

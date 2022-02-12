@@ -31,6 +31,7 @@ WORLD.players.push({
         new THREE.BoxGeometry(0.4, 0.4, 0.4),
         new THREE.MeshBasicMaterial({ color: 0xffff00 })
     ),
+    velocity: new THREE.Vector3(0, 0, 0),
     current_planet: PLANETS_SPECIFICATION.children[1],
     depth_queue: [PLANETS_SPECIFICATION]
 });
