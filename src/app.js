@@ -6,6 +6,7 @@ import engine from './engine';
 import buildSolarSystem from './buildSolarSystem';
 
 import PLANETS_SPECIFICATION from './planets-specification.json';
+import Player from './lib/player';
 
 const canvas = document.querySelector('#canvas');
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
@@ -26,15 +27,11 @@ window.WORLD = {
 WORLD.controls.enableDamping = true;
 
 
-WORLD.players.push({
-    mesh: new THREE.Mesh(
-        new THREE.BoxGeometry(0.4, 0.4, 0.4),
-        new THREE.MeshBasicMaterial({ color: 0xffff00 })
-    ),
-    velocity: new THREE.Vector3(0, 0, 0),
-    current_planet: PLANETS_SPECIFICATION.children[1],
-    depth_queue: [PLANETS_SPECIFICATION]
-});
+
+const player = new Player();
+
+WORLD.players.push(player);
+
 WORLD.players[0].mesh.position.set(2, 2, 2);
 
 
