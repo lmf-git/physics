@@ -6,7 +6,6 @@ import engine from './engine';
 import buildSolarSystem from './buildSolarSystem';
 import resizer from './resizer';
 
-
 const canvas = document.querySelector('#canvas');
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
 

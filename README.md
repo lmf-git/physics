@@ -1,7 +1,7 @@
-# physics
+# TODO
 
-/** NEXT STEPS */
-// Treat player(s) as an array for easier network integration.
-// Get in spaceship (cube)
-// Escape orbit, enter different SOI*
-// Modularise/organise code
+Simplify depth_queue/other concepts and relabel
+
+Procedural generation of planets/solar systems
+
+Treat players as an array
