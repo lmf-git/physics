@@ -18,16 +18,16 @@
             "color": "#ffff00",
             "position": [15, 10, 5]
         },
-      {
-        "name": "lilOneTwo",
-        "velocity": 0.01,
-        "spin": 0.1,
-        "surface": 1,
-        "SOISize": 10,
-        "surfaceGravity": 300,
-        "children": [],
-        "color": "#ffff00",
-        "position": [ 15, 20, 30 ]
-      }
+      //{
+      //  "name": "lilOneTwo",
+      //  "velocity": 0.01,
+      //  "spin": 0.1,
+      //  "surface": 1,
+      //  "SOISize": 10,
+      //  "surfaceGravity": 300,
+      //  "children": [],
+      //  "color": "#ffff00",
+      //  "position": [ 15, 20, 30 ]
+      //}
     ]
 }

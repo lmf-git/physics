@@ -22,13 +22,16 @@ export default function engine() {
         // check soi
         let newPlanet = null;
         if (playerHeight > soiLimit) {
-            console.log("leave");
+            console.log("leave" + currentSOI.name );
             newPlanet = player.depth_queue.pop();
         } else {
-
+            let Itempos = new THREE.Vector3(0, 0, 1);
             const matches = currentSOI.children.filter(item => {
-                let distance2 = item.body.position.distanceToSquared(player.mesh.position);
+                item.body.getWorldPosition(Itempos);
+                let distance2 = Itempos.distanceToSquared(worldPos);
+                console.log(distance2);
                 return distance2 < item.SOISize * item.SOISize;
+
             });
             if (matches[0]) {
                 newPlanet = matches[0];
