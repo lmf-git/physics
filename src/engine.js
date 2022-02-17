@@ -67,8 +67,6 @@ export default function engine() {
         // Look at the ground
         player.mesh.lookAt(planetWorldPos);
 
-      
-
         // Caculate ground
         let playerSize = 0.4 / 2;
         let height = playerSize + surfaceHeight;
@@ -77,24 +75,22 @@ export default function engine() {
         let heightScaled = playerHeight / surfaceHeight;
         let gravity = surfaceGravity / (heightScaled * heightScaled);
 
-        let OnGround = playerHeight <= (height + 0.1);
-
+        player.onGround = playerHeight <= (height + 0.1);
 
         // Move player
         let Y = 50 * ((Controls.Keypad.w ? 1 : 0) - (Controls.Keypad.s ? 1 : 0));
         let X = 50 * ((Controls.Keypad.a ? 1 : 0) - (Controls.Keypad.d ? 1 : 0));
-        let Z = (Controls.Keypad.space ? (OnGround ? -10 : 0) : gravity);
+        let Z = (Controls.Keypad.space ? (player.onGround ? -10 : 0) : gravity);
         let acceleration = new THREE.Vector3(X, Y, Z );
 
         // Transform to local coordinates
         let normalMatrix = new THREE.Matrix3().getNormalMatrix(player.mesh.matrix);
 
         if (Controls.Keypad.space) {
-            if (!OnGround) {
+            if (!player.onGround) {
                 const ThrustDirection = player.mesh.position.clone().normalize();
                 player.velocity.addScaledVector(ThrustDirection, 1);
             }
-           
         }
         acceleration.applyMatrix3(normalMatrix);
        
