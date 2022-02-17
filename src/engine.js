@@ -25,13 +25,12 @@ export default function engine() {
             console.log("leave" + currentSOI.name );
             newPlanet = player.depth_queue.pop();
         } else {
-            let Itempos = new THREE.Vector3(0, 0, 1);
+            let itemPos = new THREE.Vector3(0, 0, 1);
             const matches = currentSOI.children.filter(item => {
-                item.body.getWorldPosition(Itempos);
-                let distance2 = Itempos.distanceToSquared(worldPos);
+                item.body.getWorldPosition(itemPos);
+                let distance2 = itemPos.distanceToSquared(worldPos);
                 console.log(distance2);
                 return distance2 < item.SOISize * item.SOISize;
-
             });
             if (matches[0]) {
                 newPlanet = matches[0];
