@@ -2,7 +2,7 @@
     "name": "sun",
     "surface": 5,
     "spin": 0.1,
-    "SOISize": 3000,
+    "SOISize": 10,
     "surfaceGravity": 300,
     "color": "#00ff00",
     "position": [0, 0, 0],
@@ -12,22 +12,22 @@
             "spin": 0.1,
             "velocity": 0.02,
             "surface": 1,
-            "SOISize": 400,
+            "SOISize": 10,
             "surfaceGravity": 300,
             "children": [],
             "color": "#ffff00",
             "position": [15, 10, 5]
         },
-        {
-            "name": "lilOneTwo",
-            "velocity": 0.01,
-            "spin": 0.1,
-            "surface": 1,
-            "SOISize": 600,
-            "surfaceGravity": 300,
-            "children": [],
-            "color": "#ffff00",
-            "position": [15, 20, 30]
-        }
+      {
+        "name": "lilOneTwo",
+        "velocity": 0.01,
+        "spin": 0.1,
+        "surface": 1,
+        "SOISize": 10,
+        "surfaceGravity": 300,
+        "children": [],
+        "color": "#ffff00",
+        "position": [ 15, 20, 30 ]
+      }
     ]
 }
