@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import PLANETS_SPECIFICATION from '../planets-specification.json';
+import PLANETS_SPECIFICATION from '../generation/planets-specification.json';
 
 export default class Player {
     constructor() {

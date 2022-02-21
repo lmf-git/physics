@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import Controls from './controls';
+import Controls from './controls/controls';
 
 
 let time = 0;
@@ -29,12 +29,12 @@ export default function engine() {
             const matches = currentSOI.children.filter(item => {
                 item.body.getWorldPosition(itemPos);
                 let distance2 = itemPos.distanceToSquared(worldPos);
-                console.log(distance2);
+                // console.log(distance2);
                 return distance2 < item.SOISize * item.SOISize;
             });
             if (matches[0]) {
                 newPlanet = matches[0];
-                console.log(newPlanet.name);
+                // console.log(newPlanet.name);
                 player.depth_queue.push(currentSOI);
             }
         }

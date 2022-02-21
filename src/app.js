@@ -1,12 +1,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
-import Controls from './controls';
+import Controls from './controls/controls';
 import engine from './engine';
-import buildSolarSystem from './buildSolarSystem';
+import buildSolarSystem from './generation/buildSolarSystem';
 
-import PLANETS_SPECIFICATION from './planets-specification.json';
-import Player from './lib/player';
+import PLANETS_SPECIFICATION from './generation/planets-specification.json';
+import Player from './entities/player';
 
 const canvas = document.querySelector('#canvas');
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
