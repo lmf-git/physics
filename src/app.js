@@ -17,6 +17,8 @@ window.WORLD = {
     scene: new THREE.Scene,
     controls: new TrackballControls(camera, canvas),
     camera,
+
+    DESIRED_CAMERA: 'TrackballControls',
     
     planets: [],
 

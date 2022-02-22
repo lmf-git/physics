@@ -125,7 +125,7 @@ export default function engine() {
         player.velocity.multiplyScalar(1 - speedFactor);
 
         // Testing
-        player.aim.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / delta);
+        // player.aim.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / delta);
 
         // Apply first person looking to the player rotation.
         player.mesh.quaternion.copy(player.aim);
@@ -138,6 +138,19 @@ export default function engine() {
             element.body.rotation.y = 2 * Math.PI * element.spin * time;
         }
     });
+
+    // Handle camera controls transition, if necessary.
+    const currentCameraStyle = WORLD.controls.constructor.name;
+    const desiredCameraStyle = 
+
+
+    // 'TrackballControls'
+    // 'FirstPersonControls'
+
+    // TrackballControls
+    // FirstPersonControls
+    console.log(typeof WORLD.controls);
+    throw new Error('Testing, exit early.');
 
     WORLD.controls.update();
     WORLD.renderer.render(WORLD.scene, WORLD.camera);

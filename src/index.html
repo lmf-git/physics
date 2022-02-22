@@ -33,7 +33,10 @@
     <script>
       const controlsToggle = document.getElementById('toggle_controls');
       controlsToggle.addEventListener('click', () => {
-        alert('Toggling controls');
+        if (window.WORLD.DESIRED_CAMERA === 'TrackballControls')
+          window.WORLD.DESIRED_CAMERA = 'FirstPersonControls';
+        else 
+          window.WORLD.DESIRED_CAMERA = 'TrackballControls';
       });
     </script>
   </body>
