@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls';
 
 import Controls from './controls/controls';
 import engine from './engine';
@@ -15,7 +15,7 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 window.WORLD = {
     renderer: new THREE.WebGLRenderer({ canvas: canvas }),
     scene: new THREE.Scene,
-    controls: new OrbitControls(camera, canvas),
+    controls: new TrackballControls(camera, canvas),
     camera,
     
     planets: [],

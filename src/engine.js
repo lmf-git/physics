@@ -125,11 +125,10 @@ export default function engine() {
         player.velocity.multiplyScalar(1 - speedFactor);
 
         // Testing
-        // player.aim.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / delta);
+        player.aim.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / delta);
 
         // Apply first person looking to the player rotation.
-        // player.handle.quaternion.copy(player.aim);
-        // rotation.applyQuaternion(player.aim);
+        player.mesh.quaternion.copy(player.aim);
     });
 
     // Rotate the planets.

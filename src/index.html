@@ -7,7 +7,7 @@
   <body>
 
     <div id="temp_ui">
-      <h1>Hello ISO</h1>
+      <button id="toggle_controls">Controls</button>
     </div>
 
     <canvas id="canvas"></canvas>
@@ -30,5 +30,11 @@
       }
     </style>
     <script type="module" src="app.js"></script>
+    <script>
+      const controlsToggle = document.getElementById('toggle_controls');
+      controlsToggle.addEventListener('click', () => {
+        alert('Toggling controls');
+      });
+    </script>
   </body>
 </html>
