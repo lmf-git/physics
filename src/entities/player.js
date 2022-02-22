@@ -13,6 +13,11 @@ export default class Player {
         new THREE.MeshBasicMaterial({ color: 0xffff00 })
     );
 
+    handle = new THREE.Mesh(
+        new THREE.BoxGeometry(0.4, 0.4, 0.4),
+        new THREE.MeshBasicMaterial({ color: 0xff052 })
+    );
+
     aim = new THREE.Quaternion();
     
     velocity = new THREE.Vector3(0, 0, 0);

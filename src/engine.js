@@ -15,8 +15,8 @@ export default function engine() {
     
         // get player data
         let worldPos = new THREE.Vector3(0, 0, 1);
-        player.mesh.getWorldPosition(worldPos);
-        let playerHeight = player.mesh.position.length();
+        player.handle.getWorldPosition(worldPos);
+        let playerHeight = player.handle.position.length();
 
 
         // Check if player left SOI gravity range.
@@ -40,8 +40,8 @@ export default function engine() {
     
         // Handle player captured by another SOI's gravity.
         if (newPlanet) { 
-            // Attach the player mesh to the new planet body.
-            newPlanet.body.attach(player.mesh);
+            // Attach the player handle to the new planet body.
+            newPlanet.body.attach(player.handle);
     
             // Transform velocity to new coordinate frame
             let Amat = new THREE.Matrix3().getNormalMatrix(currentSOI.body.matrixWorld);
@@ -59,13 +59,13 @@ export default function engine() {
         // Calculate and set up direction (forward)
         const planetWorldPos = new THREE.Vector3(0, 0, 1);
         currentSOI.body.getWorldPosition(planetWorldPos);
-        const altDirection = player.mesh.localToWorld(new THREE.Vector3(0, 1, 0))
+        const altDirection = player.handle.localToWorld(new THREE.Vector3(0, 1, 0))
             .sub(worldPos)
             .normalize();
-        player.mesh.up.set(altDirection.x, altDirection.y, altDirection.z);
+        player.handle.up.set(altDirection.x, altDirection.y, altDirection.z);
     
         // Look at the ground
-        player.mesh.lookAt(planetWorldPos);
+        player.handle.lookAt(planetWorldPos);
 
         // Caculate ground
         let playerSize = 0.4 / 2;
@@ -85,11 +85,11 @@ export default function engine() {
         let acceleration = new THREE.Vector3(X, Y, Z );
 
         // Transform to local coordinates
-        let normalMatrix = new THREE.Matrix3().getNormalMatrix(player.mesh.matrix);
+        let normalMatrix = new THREE.Matrix3().getNormalMatrix(player.handle.matrix);
 
         if (Controls.Keypad.space) {
             if (!player.onGround) {
-                const thrustDirection = player.mesh.position.clone().normalize();
+                const thrustDirection = player.handle.position.clone().normalize();
                 player.velocity.addScaledVector(thrustDirection, 1);
             }
         }
@@ -97,9 +97,9 @@ export default function engine() {
        
         // Move the player
         player.velocity.addScaledVector(acceleration, delta);
-        player.mesh.position.addScaledVector(acceleration, 0.5 * delta * delta);
-        player.mesh.position.addScaledVector(player.velocity, delta);
-        playerHeight = player.mesh.position.length();
+        player.handle.position.addScaledVector(acceleration, 0.5 * delta * delta);
+        player.handle.position.addScaledVector(player.velocity, delta);
+        playerHeight = player.handle.position.length();
     
         // Caculate atmosphere
         let friction = 0;
@@ -110,12 +110,12 @@ export default function engine() {
     
         // Ground collision
         if (playerHeight <= height) {
-            player.mesh.position.clampLength(height, 100000);
+            player.handle.position.clampLength(height, 100000);
             
             friction += 300;
     
             const speed = player.velocity.length();
-            const direction = player.mesh.position.clone().normalize();
+            const direction = player.handle.position.clone().normalize();
             player.velocity.addScaledVector(direction, -player.velocity.dot(direction) / speed);
         }
 
@@ -128,7 +128,7 @@ export default function engine() {
         // player.aim.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / delta);
 
         // Apply first person looking to the player rotation.
-        // player.mesh.quaternion.copy(player.aim);
+        // player.handle.quaternion.copy(player.aim);
         // rotation.applyQuaternion(player.aim);
     });
 

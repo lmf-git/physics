@@ -30,12 +30,15 @@ WORLD.controls.enableDamping = true;
 // Add testing player (refactor into networking later).
 const player = new Player();
 WORLD.players.push(player);
+WORLD.players[0].handle.position.set(0, -1, -1);
 WORLD.players[0].mesh.position.set(0, -1, -1);
 
+// Add the mesh to the handle.
+player.handle.add(player.mesh);
 
 WORLD.scene.add(buildSolarSystem(PLANETS_SPECIFICATION));
 player.current_planet = WORLD.planets[1];
-player.current_planet.body.add(WORLD.players[0].mesh);
+player.current_planet.body.add(WORLD.players[0].handle);
 
 
 // Configure and add camera.
