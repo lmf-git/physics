@@ -124,6 +124,13 @@ export default function engine() {
         let speedFactor = friction * delta;
         if (speedFactor > 1) speedFactor = 1;
         player.velocity.multiplyScalar(1 - speedFactor);
+
+        // Testing
+        player.aim.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / delta);
+
+        // Apply first person looking to the player rotation.
+        player.mesh.quaternion.copy(player.aim);
+        // rotation.applyQuaternion(player.aim);
     });
 
     // Rotate the planets.
