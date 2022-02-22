@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
   </head>
   <body>
-
     <div id="temp_ui">
       <button id="toggle_controls">Controls</button>
     </div>
@@ -16,8 +15,7 @@
         margin: 0;
         overflow: hidden;
       }
-      #canvas {
-      }
+      #canvas {}
 
       #temp_ui {
         position: absolute;
@@ -30,14 +28,5 @@
       }
     </style>
     <script type="module" src="app.js"></script>
-    <script>
-      const controlsToggle = document.getElementById('toggle_controls');
-      controlsToggle.addEventListener('click', () => {
-        if (window.WORLD.DESIRED_CAMERA === 'TrackballControls')
-          window.WORLD.DESIRED_CAMERA = 'FirstPersonControls';
-        else 
-          window.WORLD.DESIRED_CAMERA = 'TrackballControls';
-      });
-    </script>
   </body>
 </html>
