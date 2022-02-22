@@ -19,49 +19,49 @@ export default function engine() {
         let playerHeight = player.mesh.position.length();
 
 
-        // check soi
+        // Check if player left SOI gravity range.
         let newPlanet = null;
         if (playerHeight > soiLimit) {
             console.log("leave" + currentSOI.name );
             newPlanet = currentSOI.parent;
-        } else {
-            let itemPos = new THREE.Vector3(0, 0, 1);
+        }
+        
+        // Check if player entered another SOI gravity range.
+        if (playerHeight < soiLimit) {
             const matches = currentSOI.children.filter(item => {
+                let itemPos = new THREE.Vector3(0, 0, 1);
                 item.body.getWorldPosition(itemPos);
-                let distance2 = itemPos.distanceToSquared(worldPos);
-                // console.log(distance2);
-                return distance2 < item.SOISize * item.SOISize;
+                return itemPos.distanceToSquared(worldPos) < item.SOISize * item.SOISize;
             });
-            if (matches[0]) {
+            
+            if (matches[0])
                 newPlanet = matches[0];
-            }
         }
     
-        // change planet if needed
+        // Handle player captured by another SOI's gravity.
         if (newPlanet) { 
-            // leaving the soi
-            const newitem = newPlanet;
-            const oldbody = currentSOI.body;
-            const newbody = newitem.body;
-            newbody.attach(player.mesh);
+            // Attach the player mesh to the new planet body.
+            newPlanet.body.attach(player.mesh);
     
             // Transform velocity to new coordinate frame
-            let Amat = new THREE.Matrix3().getNormalMatrix(oldbody.matrixWorld);
-            let Bmat = new THREE.Matrix3().getNormalMatrix(newbody.matrixWorld).invert();
+            let Amat = new THREE.Matrix3().getNormalMatrix(currentSOI.body.matrixWorld);
+            let Bmat = new THREE.Matrix3().getNormalMatrix(newPlanet.body.matrixWorld).invert();
     
             // Apply gravity capture velocity and newest SOI.
             player.velocity = player.velocity.applyMatrix3(Amat).applyMatrix3(Bmat);
-            currentSOI = player.current_planet = newitem;
+            currentSOI = player.current_planet = newPlanet;
         }
     
-        // look up planet infomation
+        // Look up planet information.
         let surfaceHeight = player.current_planet.surface;
         let surfaceGravity = player.current_planet.surfaceGravity;
     
-        // Caculate and set up direction(forward)
+        // Calculate and set up direction (forward)
         const planetWorldPos = new THREE.Vector3(0, 0, 1);
         currentSOI.body.getWorldPosition(planetWorldPos);
-        const altDirection = player.mesh.localToWorld(new THREE.Vector3(0, 1, 0)).sub(worldPos).normalize();
+        const altDirection = player.mesh.localToWorld(new THREE.Vector3(0, 1, 0))
+            .sub(worldPos)
+            .normalize();
         player.mesh.up.set(altDirection.x, altDirection.y, altDirection.z);
     
         // Look at the ground
@@ -75,6 +75,7 @@ export default function engine() {
         let heightScaled = playerHeight / surfaceHeight;
         let gravity = surfaceGravity / (heightScaled * heightScaled);
 
+        // Detet and update player grounded attribute.
         player.onGround = playerHeight <= (height + 0.1);
 
         // Move player
@@ -88,8 +89,8 @@ export default function engine() {
 
         if (Controls.Keypad.space) {
             if (!player.onGround) {
-                const ThrustDirection = player.mesh.position.clone().normalize();
-                player.velocity.addScaledVector(ThrustDirection, 1);
+                const thrustDirection = player.mesh.position.clone().normalize();
+                player.velocity.addScaledVector(thrustDirection, 1);
             }
         }
         acceleration.applyMatrix3(normalMatrix);
@@ -100,7 +101,7 @@ export default function engine() {
         player.mesh.position.addScaledVector(player.velocity, delta);
         playerHeight = player.mesh.position.length();
     
-        // Caculate Atmosphere
+        // Caculate atmosphere
         let friction = 0;
         friction = friction + 5 / Math.pow(1 + (playerHeight - height) / height, 2);
     
@@ -124,10 +125,10 @@ export default function engine() {
         player.velocity.multiplyScalar(1 - speedFactor);
 
         // Testing
-        player.aim.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / delta);
+        // player.aim.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / delta);
 
         // Apply first person looking to the player rotation.
-        player.mesh.quaternion.copy(player.aim);
+        // player.mesh.quaternion.copy(player.aim);
         // rotation.applyQuaternion(player.aim);
     });
 
