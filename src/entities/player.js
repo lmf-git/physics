@@ -16,6 +16,4 @@ export default class Player {
     velocity = new THREE.Vector3(0, 0, 0);
 
     current_planet = PLANETS_SPECIFICATION.children[1];
-
-    depth_queue = [PLANETS_SPECIFICATION];
 }
