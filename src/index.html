@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
   </head>
   <body>
+
+    <div id="temp_ui">
+      <h1>Hello ISO</h1>
+    </div>
+
     <canvas id="canvas"></canvas>
     <style>
       html, body {
@@ -12,7 +17,17 @@
         overflow: hidden;
       }
       #canvas {
-      } 
+      }
+
+      #temp_ui {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: silver;
+        border-radius: 2em;
+
+        color: white;
+      }
     </style>
     <script type="module" src="app.js"></script>
   </body>
