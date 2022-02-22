@@ -18,7 +18,7 @@ export default function engine() {
         player.handle.getWorldPosition(worldPos);
         let playerHeight = player.handle.position.length();
 
-
+        let BigToSmall = false;
         // Check if player left SOI gravity range.
         let newPlanet = null;
         if (playerHeight > soiLimit) {
@@ -34,8 +34,11 @@ export default function engine() {
                 return itemPos.distanceToSquared(worldPos) < item.SOISize * item.SOISize;
             });
             
-            if (matches[0])
+            if (matches[0]) {
                 newPlanet = matches[0];
+                BigToSmall = true;
+            }
+
         }
     
         // Handle player captured by another SOI's gravity.
@@ -46,9 +49,20 @@ export default function engine() {
             // Transform velocity to new coordinate frame
             let Amat = new THREE.Matrix3().getNormalMatrix(currentSOI.body.matrixWorld);
             let Bmat = new THREE.Matrix3().getNormalMatrix(newPlanet.body.matrixWorld).invert();
-    
+            
+            let PlanetPrograde;
+            let Speed;
+            if (BigToSmall) {
+                PlanetPrograde = newPlanet.body.position.clone().normalize().cross(new THREE.Vector3(0, 1, 0));
+                Speed = 2 * Math.PI * newPlanet.velocity * newPlanet.body.position.length();
+            } else {
+                PlanetPrograde = currentSOI.body.position.clone().normalize().cross(new THREE.Vector3(0, 1, 0));
+                Speed = -2 * Math.PI * currentSOI.velocity * currentSOI.body.position.length();
+            }
+          
+            console.log(Speed);
             // Apply gravity capture velocity and newest SOI.
-            player.velocity = player.velocity.applyMatrix3(Amat).applyMatrix3(Bmat);
+            player.velocity = player.velocity.applyMatrix3(Amat).applyMatrix3(Bmat).addScaledVector(PlanetPrograde, Speed);
             currentSOI = player.current_planet = newPlanet;
         }
     
@@ -76,7 +90,7 @@ export default function engine() {
         let gravity = surfaceGravity / (heightScaled * heightScaled);
 
         // Detet and update player grounded attribute.
-        player.onGround = playerHeight <= (height + 0.1);
+        player.onGround = playerHeight <= (height + 0.0001);
 
         // Move player
         let Y = 50 * ((Controls.Keypad.w ? 1 : 0) - (Controls.Keypad.s ? 1 : 0));

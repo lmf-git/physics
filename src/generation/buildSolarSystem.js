@@ -1,10 +1,24 @@
-import { Mesh, SphereGeometry, MeshBasicMaterial, Group } from 'three';
+import { Mesh, SphereGeometry, MeshBasicMaterial, MeshPhongMaterial, Group, PointLight } from 'three';
 
 function BuildBody(item, parent) {
+    var Mat 
+    if (item.emissive) {
+        Mat = new MeshPhongMaterial({ emissive: item.color, wireframe: false, color: item.color });
+    } else {
+        Mat = new MeshBasicMaterial({ wireframe: true, color: item.color });
+    }
     const body = new Mesh(
         new SphereGeometry(item.surface, 20, 20),
-        new MeshBasicMaterial({ wireframe: true, color: item.color })
+        Mat
     );
+
+    if (item.emissive) {
+        
+        pointLight = new PointLight(0xffffff);
+        pointLight.position.set(0, 0, 0);
+        body.add(pointLight);
+    }
+
     return body;
 }
 
