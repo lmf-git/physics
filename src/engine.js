@@ -163,8 +163,8 @@ export default function engine() {
 
     // TrackballControls
     // FirstPersonControls
-    console.log(typeof WORLD.controls);
-    throw new Error('Testing, exit early.');
+    // console.log(typeof WORLD.controls);
+    // throw new Error('Testing, exit early.');
 
     WORLD.controls.update();
     WORLD.renderer.render(WORLD.scene, WORLD.camera);

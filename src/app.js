@@ -1,5 +1,8 @@
 import * as THREE from 'three';
 import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls';
+import { FirstPersonControls } from './controls/FirstPersonControls';
+
+
 
 import Controls from './controls/controls';
 import engine from './engine';
@@ -15,7 +18,8 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 window.WORLD = {
     renderer: new THREE.WebGLRenderer({ canvas: canvas }),
     scene: new THREE.Scene,
-    controls: new TrackballControls(camera, canvas),
+    // controls: new TrackballControls(camera, canvas),
+    controls: null,
     camera,
 
     DESIRED_CAMERA: 'TrackballControls',
@@ -26,13 +30,14 @@ window.WORLD = {
 };
 
 // Configure controls.
-WORLD.controls.enableDamping = true;
+// WORLD.controls.enableDamping = true;
 
 
 // Add testing player (refactor into networking later).
 const player = new Player();
 WORLD.players.push(player);
 WORLD.players[0].handle.position.set(0, -1, -1);
+// WORLD.players[0].handle.position.set(0, 0, 0);
 
 // Add the mesh to the handle.
 player.handle.add(player.mesh);
@@ -41,6 +46,8 @@ WORLD.scene.add(buildSolarSystem(PLANETS_SPECIFICATION));
 player.current_planet = WORLD.planets[1];
 player.current_planet.body.add(WORLD.players[0].handle);
 
+// Testing
+WORLD.controls = new FirstPersonControls(player.mesh, canvas);
 
 // Configure and add camera.
 camera.position.set(0, 30, 30);
