@@ -58,13 +58,13 @@ export default class FirstPersonControls {
 	};
 
 	update = function(delta) {
-		if ( this.enabled === false ) return;
+		if (this.enabled === false) return;
 
-		if ( this.heightSpeed ) {
-			let y = THREE.Math.clamp( this.object.position.y, this.heightMin, this.heightMax );
+		if (this.heightSpeed) {
+			let y = THREE.Math.clamp(this.object.position.y, this.heightMin, this.heightMax);
 			let heightDelta = y - this.heightMin;
 
-			this.autoSpeedFactor = delta * ( heightDelta * this.heightCoef );
+			this.autoSpeedFactor = delta * (heightDelta * this.heightCoef);
 
 		} else {
 			this.autoSpeedFactor = 0.0;
@@ -72,36 +72,36 @@ export default class FirstPersonControls {
 
 		let actualLookSpeed = delta * this.lookSpeed;
 
-		if ( ! this.activeLook ) {
+		if (!this.activeLook) {
 			actualLookSpeed = 0;
 		}
 
 		let verticalLookRatio = 1;
 
-		if ( this.constrainVertical ) {
-			verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
+		if (this.constrainVertical) {
+			verticalLookRatio = Math.PI / (this.verticalMax - this.verticalMin);
 		}
 
 		this.lon += this.mouseX * actualLookSpeed;
-		if ( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
+		if (this.lookVertical) this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
 
-		this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
-		this.phi = THREE.Math.degToRad( 90 - this.lat );
+		this.lat = Math.max(-85, Math.min(85, this.lat));
+		this.phi = THREE.Math.degToRad(90 - this.lat);
 
-		this.theta = THREE.Math.degToRad( this.lon );
+		this.theta = THREE.Math.degToRad(this.lon);
 
-		if ( this.constrainVertical ) {
-			this.phi = THREE.Math.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
+		if (this.constrainVertical) {
+			this.phi = THREE.Math.mapLinear(this.phi, 0, Math.PI, this.verticalMin, this.verticalMax);
 		}
 
 		let targetPosition = this.target,
 			position = this.object.position;
 
-		targetPosition.x = position.x + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
-		targetPosition.y = position.y + 100 * Math.cos( this.phi );
-		targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
+		targetPosition.x = position.x + 100 * Math.sin(this.phi) * Math.cos(this.theta);
+		targetPosition.y = position.y + 100 * Math.cos(this.phi);
+		targetPosition.z = position.z + 100 * Math.sin(this.phi) * Math.sin(this.theta);
 
-		this.object.lookAt( targetPosition );
+		this.object.lookAt(targetPosition);
 	};
 
 	dispose = function() {

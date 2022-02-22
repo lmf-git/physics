@@ -93,15 +93,15 @@ export default function engine() {
         player.onGround = playerHeight <= (height + 0.0001);
 
         // Move player
-        let Y = 50 * ((Controls.Keypad.w ? 1 : 0) - (Controls.Keypad.s ? 1 : 0));
-        let X = 50 * ((Controls.Keypad.a ? 1 : 0) - (Controls.Keypad.d ? 1 : 0));
-        let Z = (Controls.Keypad.space ? (player.onGround ? -10 : 0) : gravity);
+        let Y = 50 * ((Controls.keypad.w ? 1 : 0) - (Controls.keypad.s ? 1 : 0));
+        let X = 50 * ((Controls.keypad.a ? 1 : 0) - (Controls.keypad.d ? 1 : 0));
+        let Z = (Controls.keypad.space ? (player.onGround ? -10 : 0) : gravity);
         let acceleration = new THREE.Vector3(X, Y, Z );
 
         // Transform to local coordinates
         let normalMatrix = new THREE.Matrix3().getNormalMatrix(player.handle.matrix);
 
-        if (Controls.Keypad.space) {
+        if (Controls.keypad.space) {
             if (!player.onGround) {
                 const thrustDirection = player.handle.position.clone().normalize();
                 player.velocity.addScaledVector(thrustDirection, 1);
