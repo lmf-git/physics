@@ -31,7 +31,6 @@ WORLD.controls.enableDamping = true;
 const player = new Player();
 WORLD.players.push(player);
 WORLD.players[0].handle.position.set(0, -1, -1);
-WORLD.players[0].mesh.position.set(0, -1, -1);
 
 // Add the mesh to the handle.
 player.handle.add(player.mesh);

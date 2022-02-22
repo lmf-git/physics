@@ -14,8 +14,8 @@ export default class Player {
     );
 
     handle = new THREE.Mesh(
-        new THREE.BoxGeometry(0.4, 0.4, 0.4),
-        new THREE.MeshBasicMaterial({ color: 0xff052 })
+        new THREE.BoxGeometry(0.5, 0.5, 0.5),
+        new THREE.MeshBasicMaterial({ color: 0xff052, wireframe: true })
     );
 
     aim = new THREE.Quaternion();
