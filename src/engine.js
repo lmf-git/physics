@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import Controls from './controls/controls';
 
-
 let time = 0;
 
 export default function engine() {
@@ -18,8 +17,8 @@ export default function engine() {
         player.handle.getWorldPosition(worldPos);
         let playerHeight = player.handle.position.length();
 
-        let BigToSmall = false;
         // Check if player left SOI gravity range.
+        let bigToSmall = false;
         let newPlanet = null;
         if (playerHeight > soiLimit) {
             console.log("leave" + currentSOI.name );
@@ -27,7 +26,7 @@ export default function engine() {
         }
         
         // Check if player entered another SOI gravity range.
-        if (playerHeight < soiLimit) {
+        else {
             const matches = currentSOI.children.filter(item => {
                 let itemPos = new THREE.Vector3(0, 0, 1);
                 item.body.getWorldPosition(itemPos);
@@ -36,9 +35,8 @@ export default function engine() {
             
             if (matches[0]) {
                 newPlanet = matches[0];
-                BigToSmall = true;
+                bigToSmall = true;
             }
-
         }
     
         // Handle player captured by another SOI's gravity.
@@ -47,22 +45,23 @@ export default function engine() {
             newPlanet.body.attach(player.handle);
     
             // Transform velocity to new coordinate frame
-            let Amat = new THREE.Matrix3().getNormalMatrix(currentSOI.body.matrixWorld);
-            let Bmat = new THREE.Matrix3().getNormalMatrix(newPlanet.body.matrixWorld).invert();
+            let aMat = new THREE.Matrix3().getNormalMatrix(currentSOI.body.matrixWorld);
+            let bMat = new THREE.Matrix3().getNormalMatrix(newPlanet.body.matrixWorld).invert();
             
-            let PlanetPrograde;
-            let Speed;
-            if (BigToSmall) {
-                PlanetPrograde = newPlanet.body.position.clone().normalize().cross(new THREE.Vector3(0, 1, 0));
-                Speed = 2 * Math.PI * newPlanet.velocity * newPlanet.body.position.length();
+            let planetPrograde;
+            let speed;
+            if (bigToSmall) {
+                planetPrograde = newPlanet.body.position.clone().normalize().cross(new THREE.Vector3(0, 1, 0));
+                speed = 2 * Math.PI * newPlanet.velocity * newPlanet.body.position.length();
             } else {
-                PlanetPrograde = currentSOI.body.position.clone().normalize().cross(new THREE.Vector3(0, 1, 0));
-                Speed = -2 * Math.PI * currentSOI.velocity * currentSOI.body.position.length();
+                planetPrograde = currentSOI.body.position.clone().normalize().cross(new THREE.Vector3(0, 1, 0));
+                speed = -2 * Math.PI * currentSOI.velocity * currentSOI.body.position.length();
             }
           
-            console.log(Speed);
+            // console.log(speed);
+
             // Apply gravity capture velocity and newest SOI.
-            player.velocity = player.velocity.applyMatrix3(Amat).applyMatrix3(Bmat).addScaledVector(PlanetPrograde, Speed);
+            player.velocity = player.velocity.applyMatrix3(aMat).applyMatrix3(bMat).addScaledVector(planetPrograde, speed);
             currentSOI = player.current_planet = newPlanet;
         }
     
@@ -138,9 +137,6 @@ export default function engine() {
         if (speedFactor > 1) speedFactor = 1;
         player.velocity.multiplyScalar(1 - speedFactor);
 
-        // Testing
-        // player.aim.setFromAxisAngle(new THREE.Vector3(0, 1, 0), Math.PI / delta);
-
         // Apply first person looking to the player rotation.
         player.mesh.quaternion.copy(player.aim);
     });
@@ -152,19 +148,6 @@ export default function engine() {
             element.body.rotation.y = 2 * Math.PI * element.spin * time;
         }
     });
-
-    // Handle camera controls transition, if necessary.
-    const currentCameraStyle = WORLD.controls.constructor.name;
-    const desiredCameraStyle = 
-
-
-    // 'TrackballControls'
-    // 'FirstPersonControls'
-
-    // TrackballControls
-    // FirstPersonControls
-    // console.log(typeof WORLD.controls);
-    // throw new Error('Testing, exit early.');
 
     WORLD.controls.update();
     WORLD.renderer.render(WORLD.scene, WORLD.camera);

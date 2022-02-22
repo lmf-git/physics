@@ -1,19 +1,14 @@
 import { Mesh, SphereGeometry, MeshBasicMaterial, MeshPhongMaterial, Group, PointLight } from 'three';
 
-function BuildBody(item, parent) {
-    var Mat 
-    if (item.emissive) {
-        Mat = new MeshPhongMaterial({ emissive: item.color, wireframe: false, color: item.color });
-    } else {
-        Mat = new MeshBasicMaterial({ wireframe: true, color: item.color });
-    }
-    const body = new Mesh(
-        new SphereGeometry(item.surface, 20, 20),
-        Mat
-    );
+function buildBody(item) {
+    const mat = item.emissive ?
+        new MeshPhongMaterial({ emissive: item.color, wireframe: false, color: item.color })
+        :
+        new MeshBasicMaterial({ wireframe: true, color: item.color });
+
+    const body = new Mesh(new SphereGeometry(item.surface, 20, 20), mat);
 
     if (item.emissive) {
-        
         pointLight = new PointLight(0xffffff);
         pointLight.position.set(0, 0, 0);
         body.add(pointLight);
@@ -22,9 +17,8 @@ function BuildBody(item, parent) {
     return body;
 }
 
-
-export default function buildSolarSystem(item,parent) {
-    const body = BuildBody(item, parent)
+export default function buildSolarSystem(item, parent) {
+    const body = buildBody(item, parent)
     body.position.set(...item.position);
 
     item.pivot = new Group();
