@@ -23,7 +23,7 @@ export default function engine() {
         let newPlanet = null;
         if (playerHeight > soiLimit) {
             console.log("leave" + currentSOI.name );
-            newPlanet = player.depth_queue.pop();
+            newPlanet = currentSOI.parent;
         } else {
             let itemPos = new THREE.Vector3(0, 0, 1);
             const matches = currentSOI.children.filter(item => {
@@ -34,8 +34,6 @@ export default function engine() {
             });
             if (matches[0]) {
                 newPlanet = matches[0];
-                // console.log(newPlanet.name);
-                player.depth_queue.push(currentSOI);
             }
         }
     
