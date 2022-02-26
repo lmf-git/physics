@@ -1,4 +1,9 @@
-import { Mesh, SphereGeometry, MeshBasicMaterial, MeshPhongMaterial, Group, PointLight } from 'three';
+import { 
+    Mesh, SphereGeometry, MeshBasicMaterial, 
+    Geometry, LineBasicMaterial, LineLoop,
+    MeshPhongMaterial, Group, PointLight, Vector3,
+    RingGeometry, DoubleSide
+} from 'three';
 
 function buildBody(item) {
     const mat = item.emissive ?
@@ -18,8 +23,15 @@ function buildBody(item) {
 }
 
 export default function buildSolarSystem(item, parent) {
-    const body = buildBody(item, parent)
+    const body = buildBody(item, parent);
     body.position.set(...item.position);
+
+    // Add orbit path line.
+    const orbitPath = new Mesh(
+        new RingGeometry(25, 25.05, 96),
+        new MeshBasicMaterial({ color: 0xffff00, side: DoubleSide })
+    );
+    if (parent) item.body.add(orbitPath);
 
     item.pivot = new Group();
     item.body = body;
@@ -28,10 +40,9 @@ export default function buildSolarSystem(item, parent) {
     WORLD.planets.push(item);
 
     // Recursively build children (multi-galactic support).
-    if (item.children)
-        item.children.forEach(
-            e => item.pivot.add(buildSolarSystem(e, item))
-        );
+    item.children.map(e => {
+        item.pivot.add(buildSolarSystem(e, item));
+    });
 
     return item.pivot;
 }
