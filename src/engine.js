@@ -142,10 +142,10 @@ export default function engine() {
     });
 
     // Rotate the planets.
-    WORLD.planets.forEach(element => {
-        if (element.velocity) {
-            element.pivot.rotation.y = 2 * Math.PI * element.velocity * time;
-            element.body.rotation.y = 2 * Math.PI * element.spin * time;
+    WORLD.planets.map(planet => {
+        if (planet.velocity) {
+            planet.pivot.rotation.y = 2 * Math.PI * planet.velocity * time;
+            planet.body.rotation.y = 2 * Math.PI * planet.spin * time;
         }
     });
 

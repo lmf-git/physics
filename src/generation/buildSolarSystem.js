@@ -41,11 +41,6 @@ export default function buildSolarSystem(item, parent) {
             new MeshBasicMaterial({ color: 0xffff00, side: DoubleSide })
         );
         
-        // Rotation offset from child -> parent position difference.
-        // const quaternion = new Quaternion();
-        // quaternion.setFromUnitVectors(parent.body.position, item.pivot.position);
-
-        // orbitPath.applyQuaternion(quaternion);
         orbitPath.rotation.x = Math.PI / 2;
 
         parent.body.add(orbitPath);

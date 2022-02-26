@@ -17,7 +17,7 @@
             "surfaceGravity": 300,
             "children": [],
             "color": "#ffff00",
-            "position": [15, 10, 5]
+            "position": [15, 0, 5]
         },
         {
         "name": "lilOneTwo",
@@ -28,7 +28,7 @@
         "surfaceGravity": 300,
         "children": [],
         "color": "#ffff00",
-        "position": [ 15, 20, 30 ]
+        "position": [ 15, 0, 30 ]
         }
     ]
 }
