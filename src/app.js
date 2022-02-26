@@ -22,6 +22,9 @@ window.WORLD = {
     players: []
 };
 
+// Set background colour
+WORLD.scene.background = new THREE.Color(0x050D22);
+
 // Add testing player (refactor into networking later).
 const player = new Player();
 WORLD.players.push(player);
