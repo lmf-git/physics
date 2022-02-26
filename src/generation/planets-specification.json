@@ -28,7 +28,8 @@
         "surfaceGravity": 300,
         "children": [],
         "color": "#ffff00",
-        "position": [ 15, 20, 30 ]
+        "position": [ 15, 20, 30 ],
+        "ring": true
         }
     ]
 }
