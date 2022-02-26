@@ -2,7 +2,7 @@ import {
     Mesh, SphereGeometry, MeshBasicMaterial, 
     Geometry, LineBasicMaterial, LineLoop,
     MeshPhongMaterial, Group, PointLight, Vector3,
-    RingGeometry, DoubleSide
+    RingGeometry, DoubleSide, Quaternion
 } from 'three';
 
 function buildBody(item) {
@@ -26,6 +26,12 @@ export default function buildSolarSystem(item, parent) {
     const body = buildBody(item, parent);
     body.position.set(...item.position);
 
+    item.pivot = new Group();
+    item.body = body;
+    item.pivot.add(item.body);
+    item.parent = parent;
+    WORLD.planets.push(item);
+
     // Add orbit path visual.
     if (parent) {
         const orbitPath = new Mesh(
@@ -34,16 +40,13 @@ export default function buildSolarSystem(item, parent) {
         );
         
         // Rotation offset from child -> parent position difference.
+        // const quaternion = new Quaternion();
+        // quaternion.setFromUnitVectors(parent.body.position, item.pivot.position);
 
+        // orbitPath.applyQuaternion(quaternion);
 
         parent.body.add(orbitPath);
     }
-
-    item.pivot = new Group();
-    item.body = body;
-    item.pivot.add(item.body);
-    item.parent = parent;
-    WORLD.planets.push(item);
 
     // Recursively build children (multi-galactic support).
     item.children.map(e => {
