@@ -31,7 +31,7 @@ export default function buildSolarSystem(item, parent) {
         new RingGeometry(25, 25.05, 96),
         new MeshBasicMaterial({ color: 0xffff00, side: DoubleSide })
     );
-    if (parent) item.body.add(orbitPath);
+    if (parent) body.add(orbitPath);
 
     item.pivot = new Group();
     item.body = body;
