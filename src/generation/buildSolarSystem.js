@@ -34,8 +34,10 @@ export default function buildSolarSystem(item, parent) {
 
     // Add orbit path visual.
     if (parent) {
+        let OrbitSise = body.position.length();
+
         const orbitPath = new Mesh(
-            new RingGeometry(25, 25.05, 96),
+            new RingGeometry(OrbitSise, OrbitSise + .05, 96),
             new MeshBasicMaterial({ color: 0xffff00, side: DoubleSide })
         );
         
@@ -44,6 +46,7 @@ export default function buildSolarSystem(item, parent) {
         // quaternion.setFromUnitVectors(parent.body.position, item.pivot.position);
 
         // orbitPath.applyQuaternion(quaternion);
+        orbitPath.rotation.x = Math.PI / 2;
 
         parent.body.add(orbitPath);
     }
