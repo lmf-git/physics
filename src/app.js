@@ -38,6 +38,30 @@ player.current_planet.body.add(WORLD.players[0].handle);
 camera.position.set(0, 30, 30);
 WORLD.scene.add(WORLD.camera);
 
+// Generate the stars.
+const starsCount = 200;
+const starsContainer = new THREE.Group;
+for (let s = 0; s < starsCount; s++) {
+    const star = new THREE.Mesh(
+        new THREE.CircleGeometry(.1, .1),
+        new THREE.MeshBasicMaterial({ color: 0xffffff }) 
+    );
+
+    // Calculate random star position.
+    star.position.x = Math.random() * 300 - 125;
+    star.position.y = Math.random() * 300 - 125;
+    star.position.z = Math.random() * 300 - 125;
+
+    // Limit the proximity of stars.
+    const distance = star.position.distanceTo(WORLD.planets[0].body.position);
+    if (distance > 50) {
+        starsContainer.add(star);
+        star.lookAt(WORLD.planets[0].body.position);
+    }
+ }
+
+// Add stars to scene.
+WORLD.scene.add(starsContainer);
 
 function resizer() {
     // Update camera

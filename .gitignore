@@ -6,3 +6,5 @@ dist/
 .vs/physics/config/applicationhost.config
 .vs/physics/v16/.suo
 .vs/VSWorkspaceState.json
+
+.DS_STORE
