@@ -13,7 +13,7 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 
 // Global state/access.
 window.WORLD = {
-    renderer: new THREE.WebGLRenderer({ canvas: canvas }),
+    renderer: new THREE.WebGLRenderer({ canvas: canvas, antialias: true }),
     scene: new THREE.Scene,
     controls: new TrackballControls(camera, canvas),
     camera,
