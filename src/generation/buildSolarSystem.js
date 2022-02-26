@@ -26,12 +26,18 @@ export default function buildSolarSystem(item, parent) {
     const body = buildBody(item, parent);
     body.position.set(...item.position);
 
-    // Add orbit path line.
-    const orbitPath = new Mesh(
-        new RingGeometry(25, 25.05, 96),
-        new MeshBasicMaterial({ color: 0xffff00, side: DoubleSide })
-    );
-    if (parent) parent.body.add(orbitPath);
+    // Add orbit path visual.
+    if (parent) {
+        const orbitPath = new Mesh(
+            new RingGeometry(25, 25.05, 96),
+            new MeshBasicMaterial({ color: 0xffff00, side: DoubleSide })
+        );
+        
+        // Rotation offset from child -> parent position difference.
+
+
+        parent.body.add(orbitPath);
+    }
 
     item.pivot = new Group();
     item.body = body;
