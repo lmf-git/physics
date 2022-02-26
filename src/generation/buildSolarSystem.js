@@ -32,9 +32,8 @@ export default function buildSolarSystem(item, parent) {
     item.parent = parent;
     WORLD.planets.push(item);
 
+    // Add visual rings for planets.
     if (item.ring) {
- 
-
         const ring = new Mesh(
             new RingGeometry(item.surface + 1, item.surface + 1.5, 96),
             new MeshBasicMaterial({ color: 0xffff00, side: DoubleSide })
@@ -42,7 +41,6 @@ export default function buildSolarSystem(item, parent) {
         item.body.add(ring);
         ring.rotation.x = Math.PI / 2 - 0.1;
     }
-
 
     // Add orbit path visual.
     if (parent) {
