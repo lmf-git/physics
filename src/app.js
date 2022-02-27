@@ -1,12 +1,15 @@
 import * as THREE from 'three';
 import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls';
 
-import Controls from './controls/controls';
+import Controls from './experience/controls';
 import engine from './engine';
 import buildSolarSystem from './generation/buildSolarSystem';
 
 import PLANETS_SPECIFICATION from './generation/planets-specification.json';
 import Player from './entities/player';
+
+import ExperienceManager from './experience/experienceManager';
+
 
 const canvas = document.querySelector('#canvas');
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 200);
@@ -19,7 +22,14 @@ window.WORLD = {
     camera,
     
     planets: [],
-    players: []
+    players: [],
+
+    settings: {
+        view: {
+            DESIRED_CAMERA_KEY: ExperienceManager.CAMERA_KEYS.TRACKBALL,
+            CURRENT_CAMERA_KEY: ExperienceManager.CAMERA_KEYS.TRACKBALL
+        }
+    }
 };
 
 // Set background colour
@@ -77,6 +87,17 @@ function resizer() {
 };
 window.addEventListener('resize', resizer);
 resizer();
+
+// Temporary measure for testing cameras
+const toggleBtn = document.getElementById('toggle_controls');
+toggleBtn.addEventListener('click', e => {
+    if (WORLD.settings.view.DESIRED_CAMERA_KEY === ExperienceManager.CAMERA_KEYS.FIRST_PERSON)
+        WORLD.settings.view.DESIRED_CAMERA_KEY = ExperienceManager.CAMERA_KEYS.TRACKBALL
+    else
+        WORLD.settings.view.DESIRED_CAMERA_KEY = ExperienceManager.CAMERA_KEYS.FIRST_PERSON
+
+    // ExperienceManager.change(ExperienceManager.CAMERA_KEYS.FIRST_PERSON);
+});
 
 Controls.initialise();
 

@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import Controls from './controls/controls';
+import Controls from './experience/controls';
+import ExperienceManager from './experience/experienceManager';
 
 let time = 0;
 
@@ -58,8 +59,6 @@ export default function engine() {
                 speed = -2 * Math.PI * currentSOI.velocity * currentSOI.body.position.length();
             }
           
-            // console.log(speed);
-
             // Apply gravity capture velocity and newest SOI.
             player.velocity = player.velocity.applyMatrix3(aMat).applyMatrix3(bMat).addScaledVector(planetPrograde, speed);
             currentSOI = player.current_planet = newPlanet;
@@ -148,6 +147,11 @@ export default function engine() {
             planet.body.rotation.y = 2 * Math.PI * planet.spin * time;
         }
     });
+
+
+    // Handle camera changes.
+    if (WORLD.settings.view.DESIRED_CAMERA_KEY !== WORLD.settings.view.CURRENT_CAMERA_KEY)
+        ExperienceManager.change(WORLD.settings.view.DESIRED_CAMERA_KEY);
 
     WORLD.controls.update();
     WORLD.renderer.render(WORLD.scene, WORLD.camera);
