@@ -401,7 +401,6 @@ export class TrackballControls extends EventDispatcher {
 
 			lastPosition.copy( scope.object.position );
 			lastZoom = scope.object.zoom;
-
 		};
 
 		// listeners

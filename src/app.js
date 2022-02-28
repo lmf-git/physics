@@ -27,6 +27,10 @@ window.WORLD = {
     planets: [],
     players: [],
 
+    me: {
+        player: null
+    },
+
     settings: {
         view: {
             DESIRED_CAMERA_KEY: ExperienceManager.CAMERA_KEYS.TRACKBALL,
@@ -41,6 +45,7 @@ WORLD.scene.background = new THREE.Color(0x050D22);
 // Add testing player (refactor into networking later).
 const player = new Player();
 WORLD.players.push(player);
+WORLD.me.player = player;
 WORLD.players[0].handle.position.set(0, -1, -1);
 
 // Add the mesh to the handle.

@@ -210,20 +210,16 @@ class FirstPersonControls {
 			const targetPosition = new Vector3();
 
 			return function update( delta ) {
-
 				if ( this.enabled === false ) return;
 
 				if ( this.heightSpeed ) {
-
 					const y = MathUtils.clamp( this.object.position.y, this.heightMin, this.heightMax );
 					const heightDelta = y - this.heightMin;
 
 					this.autoSpeedFactor = delta * ( heightDelta * this.heightCoef );
 
 				} else {
-
 					this.autoSpeedFactor = 0.0;
-
 				}
 
 				const actualMoveSpeed = delta * this.movementSpeed;
@@ -323,6 +319,10 @@ class FirstPersonControls {
 
 	reset() {
 		alert('Reset to FIRST_PERSON');
+
+		// WORLD.camera.lookAt(WORLD.planets[0].body);
+
+		// Move the 
 	}
 }
 
