@@ -381,7 +381,7 @@ export class TrackballControls extends EventDispatcher {
 		};
 
 		this.reset = function () {
-			alert('Reset to FIRST_PERSON');
+			alert('Reset to TRACKBALL');
 
 			_state = STATE.NONE;
 			_keyState = STATE.NONE;
