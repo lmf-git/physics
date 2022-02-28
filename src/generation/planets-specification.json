@@ -5,7 +5,7 @@
     "SOISize": 100,
     "emissive": 1,
     "surfaceGravity": 300,
-    "color": "#00ff00",
+    "color": "#ffff00",
     "position": [0, 0, 0],
     "children": [
         {
@@ -16,7 +16,7 @@
             "SOISize": 10,
             "surfaceGravity": 300,
             "children": [],
-            "color": "#ffff00",
+            "color": "#00ff00",
             "position": [15, 0, 5]
         },
         {
@@ -27,7 +27,7 @@
             "SOISize": 10,
             "surfaceGravity": 300,
             "children": [],
-            "color": "#ffff00",
+            "color": "#00ff00",
             "position": [ 15, 0, 30 ],
             "ring": true
         }

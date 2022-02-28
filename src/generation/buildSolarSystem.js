@@ -36,7 +36,7 @@ export default function buildSolarSystem(item, parent) {
     if (item.ring) {
         const ring = new Mesh(
             new RingGeometry(item.surface + 1, item.surface + 1.5, 96),
-            new MeshBasicMaterial({ color: 0xffff00, side: DoubleSide })
+            new MeshBasicMaterial({ color: 0x00ff00, side: DoubleSide })
         );
         item.body.add(ring);
         ring.rotation.x = Math.PI / 2 - 0.1;

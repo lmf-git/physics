@@ -21,10 +21,8 @@ export default function engine() {
         // Check if player left SOI gravity range.
         let bigToSmall = false;
         let newPlanet = null;
-        if (playerHeight > soiLimit) {
-            console.log("leave" + currentSOI.name );
+        if (playerHeight > soiLimit)
             newPlanet = currentSOI.parent;
-        }
         
         // Check if player entered another SOI gravity range.
         else {
