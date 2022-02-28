@@ -1,5 +1,5 @@
-import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls';
 import { FirstPersonControls } from './FirstPersonControls';
+import { TrackballControls } from './TrackballControls';
 
 export default class ExperienceManager {
 
@@ -16,5 +16,6 @@ export default class ExperienceManager {
     static change(cameraKey) {    
         window.WORLD.controls = new this.CAMERA_TYPES[cameraKey](WORLD.camera, WORLD.canvas);
         window.WORLD.settings.view.CURRENT_CAMERA_KEY = cameraKey;
+        window.WORLD.controls.reset();
     }
 }

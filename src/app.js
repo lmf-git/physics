@@ -1,7 +1,8 @@
 import * as THREE from 'three';
-import { TrackballControls } from 'three/examples/jsm/controls/TrackballControls';
 
 import Controls from './experience/controls';
+import { TrackballControls } from './experience/TrackballControls';
+
 import engine from './engine';
 import buildSolarSystem from './generation/buildSolarSystem';
 
@@ -9,6 +10,7 @@ import PLANETS_SPECIFICATION from './generation/planets-specification.json';
 import Player from './entities/player';
 
 import ExperienceManager from './experience/experienceManager';
+
 
 
 const canvas = document.querySelector('#canvas');

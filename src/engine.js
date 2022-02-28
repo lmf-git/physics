@@ -90,6 +90,9 @@ export default function engine() {
         // Detet and update player grounded attribute.
         player.onGround = playerHeight <= (height + 0.0001);
 
+        // Handle movement update controls based on camera used.
+        WORLD.controls.update();
+
         // Move player
         let x = 50 * ((Controls.keypad.a ? 1 : 0) - (Controls.keypad.d ? 1 : 0));
         let y = 50 * ((Controls.keypad.w ? 1 : 0) - (Controls.keypad.s ? 1 : 0));
@@ -152,7 +155,7 @@ export default function engine() {
     if (WORLD.settings.view.DESIRED_CAMERA_KEY !== WORLD.settings.view.CURRENT_CAMERA_KEY)
         ExperienceManager.change(WORLD.settings.view.DESIRED_CAMERA_KEY);
 
-    WORLD.controls.update();
+    
     WORLD.renderer.render(WORLD.scene, WORLD.camera);
     window.requestAnimationFrame(engine);
 }
