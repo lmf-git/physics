@@ -148,7 +148,6 @@ export default function engine() {
         }
     });
 
-
     // Handle camera changes.
     if (WORLD.settings.view.DESIRED_CAMERA_KEY !== WORLD.settings.view.CURRENT_CAMERA_KEY)
         ExperienceManager.change(WORLD.settings.view.DESIRED_CAMERA_KEY);

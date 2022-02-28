@@ -14,6 +14,7 @@ export default class ExperienceManager {
     };
 
     static change(cameraKey) {    
-        alert('CHANGE CAMERA!!')
+        window.WORLD.controls = new this.CAMERA_TYPES[cameraKey](WORLD.camera, WORLD.canvas);
+        window.WORLD.settings.view.CURRENT_CAMERA_KEY = cameraKey;
     }
 }

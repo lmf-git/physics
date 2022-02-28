@@ -19,6 +19,7 @@ window.WORLD = {
     renderer: new THREE.WebGLRenderer({ canvas: canvas, antialias: true }),
     scene: new THREE.Scene,
     controls: new TrackballControls(camera, canvas),
+    canvas,
     camera,
     
     planets: [],
@@ -95,8 +96,6 @@ toggleBtn.addEventListener('click', e => {
         WORLD.settings.view.DESIRED_CAMERA_KEY = ExperienceManager.CAMERA_KEYS.TRACKBALL
     else
         WORLD.settings.view.DESIRED_CAMERA_KEY = ExperienceManager.CAMERA_KEYS.FIRST_PERSON
-
-    // ExperienceManager.change(ExperienceManager.CAMERA_KEYS.FIRST_PERSON);
 });
 
 Controls.initialise();
